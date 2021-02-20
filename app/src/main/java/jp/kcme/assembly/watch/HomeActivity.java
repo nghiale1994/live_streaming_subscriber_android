@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,10 +21,10 @@ public class HomeActivity extends CommonActivity {
 
     private ShowStreamState state;
 
-    private Button homeBtn;
-    private Button refreshBtn;
-    private Button showStreamingOnlyBtn;
-    private Button showHistoryOnlyBtn;
+    private ImageView homeBtn;
+    private ImageView refreshBtn;
+    private TextView showStreamingOnlyBtn;
+    private TextView showHistoryOnlyBtn;
     
     private RecyclerView streamListview;
 
@@ -38,7 +40,7 @@ public class HomeActivity extends CommonActivity {
         refreshBtn = findViewById(R.id.refresh_btn);
         showStreamingOnlyBtn = findViewById(R.id.show_streaming_btn);
         showHistoryOnlyBtn = findViewById(R.id.show_history_stream_btn);
-        
+
         streamListview = findViewById(R.id.stream_list);
         streamListview.setLayoutManager(new LinearLayoutManager(this));
 

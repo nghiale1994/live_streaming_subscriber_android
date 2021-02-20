@@ -1,10 +1,13 @@
 package jp.kcme.assembly.watch;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -91,10 +94,28 @@ public class Stream implements Comparable {
         return "";
     }
 
+    public static Date parseDate(String dateString) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        Date value;
+        try {
+            value = df1.parse(dateString);
+        } catch (ParseException e1) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            try {
+                value = df2.parse(dateString);
+            } catch (ParseException e2) {
+                return null;
+            }
+        }
+        return value;
+    }
+
     @Override
     public int compareTo(Object o) {
-        Date thisDate = AppUtils.get().dateValue(this.getCreatedDate());
-        Date thatDate = AppUtils.get().dateValue(((Stream) o).getCreatedDate());
+        Date thisDate = parseDate(this.getCreatedDate());
+        Date thatDate = parseDate(((Stream) o).getCreatedDate());
         try {
             if (thatDate.after(thisDate)) {
                 return 1;

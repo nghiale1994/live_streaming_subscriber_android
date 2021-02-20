@@ -5,58 +5,125 @@
     android:id="@+id/constraint"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#97e8af"
     android:orientation="horizontal"
-    android:padding="10pt">
+    android:padding="2dp">
 
-    <Button
-        android:id="@+id/home_btn"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt"
-        android:text="Home"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/show_streaming_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/selector_button_toggle"
-        android:padding="5pt"
-        android:text="Only streaming meeting"
-        app:layout_constraintBottom_toBottomOf="@+id/refresh_btn"
-        app:layout_constraintStart_toEndOf="@+id/refresh_btn"
-        app:layout_constraintTop_toTopOf="@+id/refresh_btn" />
+        <ImageView
+            android:id="@+id/home_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.1"
+            app:srcCompat="@drawable/home_button" />
 
-    <Button
-        android:id="@+id/show_history_stream_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/selector_button_toggle"
-        android:padding="5pt"
-        android:text="Only history metting"
-        app:layout_constraintBottom_toBottomOf="@+id/show_streaming_btn"
-        app:layout_constraintStart_toEndOf="@+id/show_streaming_btn"
-        app:layout_constraintTop_toTopOf="@+id/show_streaming_btn" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:padding="2pt"
+            android:text="@string/home_button"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/home_btn"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintStart_toStartOf="@+id/home_btn" />
+
+        <ImageView
+            android:id="@+id/refresh_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/home_btn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.1"
+            app:srcCompat="@drawable/refresh_button" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:padding="2pt"
+            android:text="@string/refresh_button"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            app:autoSizeTextType="uniform"
+            android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/refresh_btn"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintStart_toStartOf="@+id/refresh_btn" />
+
+        <TextView
+            android:id="@+id/show_streaming_btn"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/selector_button_toggle"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:text="@string/show_streaming_only"
+            android:textColor="@android:color/background_light"
+            android:textStyle="bold"
+            app:autoSizeStepGranularity="15dp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@+id/refresh_btn"
+            app:layout_constraintEnd_toStartOf="@+id/show_history_stream_btn"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/refresh_btn"
+            app:layout_constraintTop_toTopOf="@+id/refresh_btn"
+            app:layout_constraintWidth_percent="0.35" />
+
+        <TextView
+            android:id="@+id/show_history_stream_btn"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/selector_button_toggle"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:text="@string/show_history_only"
+            android:textColor="@android:color/background_light"
+            android:textStyle="bold"
+            app:autoSizeStepGranularity="15dp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@+id/show_streaming_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/show_streaming_btn"
+            app:layout_constraintTop_toTopOf="@+id/show_streaming_btn"
+            app:layout_constraintWidth_percent="0.35" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/stream_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_btn" />
-
-    <Button
-        android:id="@+id/refresh_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Refresh"
-        app:layout_constraintStart_toEndOf="@+id/home_btn"
-        app:layout_constraintTop_toTopOf="@+id/home_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

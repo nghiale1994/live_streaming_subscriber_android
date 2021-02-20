@@ -56,24 +56,6 @@ public class AppUtils {
         return true;
     }
 
-    public Date dateValue(String dateformat) {
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        Date value = null;
-        try {
-            value = df1.parse(dateformat);
-        } catch (ParseException e1) {
-            @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            try {
-                value = df2.parse(dateformat);
-            } catch (ParseException e2) {
-                return null;
-            }
-        }
-        return value;
-    }
-
     public void printJson(Object form) {
         if (form != null) {
             Log.i(tag(), form.getClass().getSimpleName());

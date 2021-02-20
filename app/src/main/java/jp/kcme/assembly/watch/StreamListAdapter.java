@@ -1,5 +1,6 @@
 package jp.kcme.assembly.watch;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -31,18 +32,21 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
      * (custom ViewHolder).
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView streamType;
         private final ImageView thumbnail;
         private final TextView title;
         private final TextView subtitle;
 
-        private Context context;
-        private Stream stream;
-
         public ViewHolder(View view) {
             super(view);
+            streamType = view.findViewById(R.id.stream_type);
             thumbnail = view.findViewById(R.id.thumbnail);
             title = view.findViewById(R.id.title);
             subtitle = view.findViewById(R.id.subtitle);
+        }
+
+        public TextView getStreamType() {
+            return streamType;
         }
 
         public TextView getTitle() {
@@ -58,16 +62,29 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.recyclerview_stream_item, viewGroup, false);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recyclerview_stream_item, parent, false);
 
-        return new ViewHolder(view);
+        ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+        layoutParams.height = (int) (parent.getHeight() * 0.25);
+        itemView.setLayoutParams(layoutParams);
+
+        return new ViewHolder(itemView);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         final Stream stream = streamList.get(position);
+
+        if (stream.isStreaming()) {
+            viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.streaming_type_background));
+            viewHolder.getStreamType().setText(R.string.streaming);
+        } else {
+            viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.video_type_background));
+            viewHolder.getStreamType().setText(R.string.video);
+        }
 
         viewHolder.getTitle().setText(stream.getTitle());
         viewHolder.getSubtitle().setText(stream.getSubtitle());
