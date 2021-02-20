@@ -4,9 +4,12 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
+import jp.kcme.assembly.watch.AppUtils;
 import jp.kcme.assembly.watch.Stream;
 import jp.kcme.assembly.watch.retrofit.AppRequest;
 import jp.kcme.assembly.watch.retrofit.AppService;
@@ -58,19 +61,21 @@ public class ShowStreamState {
         call.enqueue(new Callback<StreamListResponse>() {
             @Override
             public void onResponse(Call<StreamListResponse> call, Response<StreamListResponse> response) {
-                Log.i("fetchStreams", "StreamListResponse: " + response.body());
+                Log.i(AppUtils.get().tag(), "StreamListResponse: " + response.body());
                 if (response.body() != null) {
                     ArrayList<Stream> fetchedStreams = response.body().getData();
                     originalList.clear();
-                    originalList.addAll(fetchedStreams);
+                    originalList.addAll(sortedList(fetchedStreams));
                     streamListData.postValue(filteredListByMode(originalList));
                 }
             }
 
             @Override
             public void onFailure(Call<StreamListResponse> call, Throwable t) {
-                Log.e("fetchStreams", "Request failed");
+                Log.e(AppUtils.get().tag(), "Request failed");
                 t.printStackTrace();
+                originalList.clear();
+                streamListData.postValue(originalList);
             }
         });
     }
@@ -116,10 +121,37 @@ public class ShowStreamState {
         return "";
     }
 
+    /**
+     * * Sort input streams, with streaming ones first and history ones after
+     *
+     * @param streamList the input list
+     * @return ArrayList<Stream> sorted list
+     */
+    public ArrayList<Stream> sortedList(ArrayList<Stream> streamList) {
+        ArrayList<Stream> streamingList = new ArrayList<>();
+        ArrayList<Stream> historyList = new ArrayList<>();
+        ArrayList<Stream> sortedList = new ArrayList<>();
+
+        for (Stream stream : streamList) {
+            if (stream.isStreaming()) {
+                streamingList.add(stream);
+            } else {
+                historyList.add(stream);
+            }
+        }
+
+        Collections.sort(streamingList);
+        Collections.sort(historyList);
+
+        sortedList.addAll(streamingList);
+        sortedList.addAll(historyList);
+        return sortedList;
+    }
+
     public ArrayList<Stream> filteredListByMode(ArrayList<Stream> streamList) {
         ArrayList<Stream> filteredList = new ArrayList<>();
         String currentMode = getActiveMode();
-        Log.i(ShowStreamState.class.getSimpleName(), "currentMode: " + currentMode);
+        Log.i(AppUtils.get().tag(), "currentMode: " + currentMode);
         switch (currentMode) {
             case SHOW_ONLY_STREAMING_MODE:
                 for (Stream stream : streamList) {

@@ -1,11 +1,14 @@
 package jp.kcme.assembly.watch;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.HashMap;
 
-public class Stream {
+public class Stream implements Comparable {
 
     @Expose
     private String id = "";
@@ -16,6 +19,9 @@ public class Stream {
     private String title = "";
     @Expose
     private String subtitle = "";
+    @Expose
+    @SerializedName("created_date")
+    private String createdDate = "";
     @Expose
     @SerializedName("is_streaming")
     private boolean isStreaming;
@@ -54,6 +60,14 @@ public class Stream {
         this.subtitle = subtitle;
     }
 
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public boolean isStreaming() {
         return isStreaming;
     }
@@ -72,14 +86,25 @@ public class Stream {
 
     @Override
     public String toString() {
-        return "Stream{" +
-                "id='" + id + '\'' +
-                ", channelId='" + channelId + '\'' +
-                ", title='" + title + '\'' +
-                ", subtitle='" + subtitle + '\'' +
-                ", isStreaming=" + isStreaming +
-                ", thumbnails=" + thumbnails +
-                '}';
+        Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
+        AppUtils.get().printJson(this);
+        return "";
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Date thisDate = AppUtils.get().dateValue(this.getCreatedDate());
+        Date thatDate = AppUtils.get().dateValue(((Stream) o).getCreatedDate());
+        try {
+            if (thatDate.after(thisDate)) {
+                return 1;
+            } else if (thatDate.before(thisDate)) {
+                return -1;
+            }
+        } catch (Exception e) {
+            Log.e(AppUtils.get().tag(), "Exception: " + e);
+        }
+        return 0;
     }
 
     static class Thumbnail {
@@ -88,6 +113,7 @@ public class Stream {
         @Expose
         private int height;
         @Expose
+        @SerializedName("created_date")
         private String createdDate = "";
         @Expose
         private String url = "";
@@ -126,12 +152,9 @@ public class Stream {
 
         @Override
         public String toString() {
-            return "Thumbnail{" +
-                    "width=" + width +
-                    ", height=" + height +
-                    ", createdDate='" + createdDate + '\'' +
-                    ", url='" + url + '\'' +
-                    '}';
+            Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
+            AppUtils.get().printJson(this);
+            return "";
         }
     }
 }
