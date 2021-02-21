@@ -3,7 +3,6 @@ package jp.kcme.assembly.watch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,9 +50,7 @@ public class HomeActivity extends CommonActivity {
         state.getStreamListData().observe(this, new Observer<ArrayList<Stream>>() {
             @Override
             public void onChanged(ArrayList<Stream> streams) {
-                streamList.clear();
-                streamList.addAll(streams);
-                streamListAdapter.notifyDataSetChanged();
+                streamListAdapter.setData(streams);
             }
         });
 

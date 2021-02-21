@@ -1,9 +1,20 @@
 <resources>
     <string name="app_name">議会中継</string>
+
+    <string name="host">spider01.mstgikai.com</string>
+    <string name="asset_statements">
+        [{
+            \"relation\": [\"delegate_permission/common.handle_all_urls\"],
+            \"target\": {
+                \"namespace\": \"web\",
+                \"site\": \"http://spider01.mstgikai.com\"}
+        }]
+    </string>
+
     <string name="home_button">戻る</string>
     <string name="refresh_button">更新</string>
     <string name="show_streaming_only">ライブ中の放送のみ表示</string>
-    <string name="show_history_only">過去中の放送のみ表示</string>
+    <string name="show_history_only">過去の放送のみ表示</string>
     <string name="streaming">放送中</string>
     <string name="video">録画</string>
 </resources>

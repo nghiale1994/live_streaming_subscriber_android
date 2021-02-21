@@ -61,7 +61,8 @@ public class ShowStreamState {
         call.enqueue(new Callback<StreamListResponse>() {
             @Override
             public void onResponse(Call<StreamListResponse> call, Response<StreamListResponse> response) {
-                Log.i(AppUtils.get().tag(), "StreamListResponse: " + response.body());
+                Log.i(AppUtils.get().tag(), "StreamListResponse: ");
+                Log.i(AppUtils.get().tag(), response.body().toString());
                 if (response.body() != null) {
                     ArrayList<Stream> fetchedStreams = response.body().getData();
                     originalList.clear();
