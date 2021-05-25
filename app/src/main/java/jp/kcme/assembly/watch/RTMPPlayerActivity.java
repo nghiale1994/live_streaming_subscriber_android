@@ -38,7 +38,7 @@ public class RTMPPlayerActivity extends CommonActivity {
 
         MediaSource videoSource = new ExtractorMediaSource
                 .Factory(rtmpDataSourceFactory)
-                .createMediaSource(Uri.parse("rtmp://beetle.mstgikai.com/live/gia"));
+                .createMediaSource(Uri.parse("rtmp://beetle.mstgikai.com/live/" + getIntent().getStringExtra("channelId")));
 
         player.prepare(videoSource);
         player.setPlayWhenReady(true);
