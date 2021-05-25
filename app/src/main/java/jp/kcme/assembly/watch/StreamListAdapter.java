@@ -109,26 +109,29 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = Properties.API_PREFIX + Properties.WATCH_STREAM;
-                if (!stream.getChannelId().equals("")) {
-                    url += "?channel=" + stream.getChannelId();
-                }
-//                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-//                CustomTabsIntent customTabsIntent = builder.build();
+//                String url = Properties.API_PREFIX + Properties.WATCH_STREAM;
+//                if (!stream.getChannelId().equals("")) {
+//                    url += "?channel=" + stream.getChannelId();
+//                }
+////                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+////                CustomTabsIntent customTabsIntent = builder.build();
+////
+////                customTabsIntent.intent.setPackage("com.android.chrome");
+////                customTabsIntent.launchUrl(context, Uri.parse(url));
 //
-//                customTabsIntent.intent.setPackage("com.android.chrome");
-//                customTabsIntent.launchUrl(context, Uri.parse(url));
+//                TrustedWebActivityIntentBuilder builder = new TrustedWebActivityIntentBuilder(Uri.parse(url))
+//                        .setScreenOrientation(ScreenOrientation.LANDSCAPE);
+//                TwaLauncher launcher = new TwaLauncher(context);
+//                launcher.launch(builder, null, null, null);
+//
+////                Intent intent = new Intent(context, com.google.androidbrowserhelper.trusted.LauncherActivity.class);
+////                intent.setData(Uri.parse(url));
+//////                intent.setData(Uri.parse("https://google.com"));
+////                intent.setAction(Intent.ACTION_VIEW);
+////                context.startActivity(intent);
 
-                TrustedWebActivityIntentBuilder builder = new TrustedWebActivityIntentBuilder(Uri.parse(url))
-                        .setScreenOrientation(ScreenOrientation.LANDSCAPE);
-                TwaLauncher launcher = new TwaLauncher(context);
-                launcher.launch(builder, null, null, null);
-
-//                Intent intent = new Intent(context, com.google.androidbrowserhelper.trusted.LauncherActivity.class);
-//                intent.setData(Uri.parse(url));
-////                intent.setData(Uri.parse("https://google.com"));
-//                intent.setAction(Intent.ACTION_VIEW);
-//                context.startActivity(intent);
+                Intent intent = new Intent(context, RTMPPlayerActivity.class);
+                context.startActivity(intent);
             }
         });
     }

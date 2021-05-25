@@ -60,6 +60,9 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".RTMPPlayerActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>
