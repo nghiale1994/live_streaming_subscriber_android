@@ -119,16 +119,16 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
 //                customTabsIntent.intent.setPackage("com.android.chrome");
 //                customTabsIntent.launchUrl(context, Uri.parse(url));
 
-//                TrustedWebActivityIntentBuilder builder = new TrustedWebActivityIntentBuilder(Uri.parse(url))
-//                        .setScreenOrientation(ScreenOrientation.LANDSCAPE);
-//                TwaLauncher launcher = new TwaLauncher(context);
-//                launcher.launch(builder, null, null, null);
+                TrustedWebActivityIntentBuilder builder = new TrustedWebActivityIntentBuilder(Uri.parse(url))
+                        .setScreenOrientation(ScreenOrientation.LANDSCAPE);
+                TwaLauncher launcher = new TwaLauncher(context);
+                launcher.launch(builder, null, null, null);
 
-                Intent intent = new Intent(context, com.google.androidbrowserhelper.trusted.LauncherActivity.class);
-                intent.setData(Uri.parse(url));
-//                intent.setData(Uri.parse("https://google.com"));
-                intent.setAction(Intent.ACTION_VIEW);
-                context.startActivity(intent);
+//                Intent intent = new Intent(context, com.google.androidbrowserhelper.trusted.LauncherActivity.class);
+//                intent.setData(Uri.parse(url));
+////                intent.setData(Uri.parse("https://google.com"));
+//                intent.setAction(Intent.ACTION_VIEW);
+//                context.startActivity(intent);
             }
         });
     }

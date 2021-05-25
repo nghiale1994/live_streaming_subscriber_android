@@ -39,7 +39,7 @@
 <!--             Edit android:value to change the url opened by the Trusted Web Activity -->
 <!--            <meta-data-->
 <!--                android:name="android.support.customtabs.trusted.DEFAULT_URL"-->
-<!--                android:value="https://spider01.mstgikai.com" />-->
+<!--                android:value="https://spider02.mstgikai.com" />-->
 
             <!--
               This intent-filter allows the Trusted Web Activity to handle Intents to open

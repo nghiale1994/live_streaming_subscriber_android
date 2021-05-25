@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">議会中継</string>
+    <string name="app_name">議会中継-テスト用</string>
 
-    <string name="host">spider01.mstgikai.com</string>
+    <string name="host">spider02.mstgikai.com</string>
     <string name="asset_statements">
         [{
             \"relation\": [\"delegate_permission/common.handle_all_urls\"],
             \"target\": {
                 \"namespace\": \"web\",
-                \"site\": \"http://spider01.mstgikai.com\"}
+                \"site\": \"http://spider02.mstgikai.com\"}
         }]
     </string>
 
