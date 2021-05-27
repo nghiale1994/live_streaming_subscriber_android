@@ -20,17 +20,17 @@ import java.util.ArrayList;
 
 
 public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Callback {
-public final static String TAG = "RtmpVlcPlayerActivity";
-private String mFilePath;
-private SurfaceView mSurface;
-private SurfaceHolder holder;
-private LibVLC libvlc;
-private MediaPlayer mMediaPlayer = null;
-private int mVideoWidth;
-private int mVideoHeight;
+    public final static String TAG = "RtmpVlcPlayerActivity";
+    private String mFilePath;
+    private SurfaceView mSurface;
+    private SurfaceHolder holder;
+    private LibVLC libvlc;
+    private MediaPlayer mMediaPlayer = null;
+    private int mVideoWidth;
+    private int mVideoHeight;
 
-@Override
-public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.frame_rtmp_vlc_player);
 
@@ -39,63 +39,63 @@ public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "Playing: " + mFilePath);
         mSurface = (SurfaceView) findViewById(R.id.surface);
         holder = mSurface.getHolder();
-        }
+    }
 
-@Override
-public void onConfigurationChanged(Configuration newConfig) {
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setSize(mVideoWidth, mVideoHeight);
-        }
+    }
 
-@Override
-protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
         createPlayer(mFilePath);
-        }
+    }
 
-@Override
-protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
         releasePlayer();
-        }
+    }
 
-@Override
-protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         releasePlayer();
-        }
-        
-/**
- * Used to set size for SurfaceView
- *
- * @param width
- * @param height
- */
-private void setSize(int width, int height) {
+    }
+
+    /**
+     * Used to set size for SurfaceView
+     *
+     * @param width
+     * @param height
+     */
+    private void setSize(int width, int height) {
         mVideoWidth = width;
         mVideoHeight = height;
         if (mVideoWidth * mVideoHeight <= 1)
-        return;
+            return;
 
         if (holder == null || mSurface == null)
-        return;
+            return;
 
         int w = getWindow().getDecorView().getWidth();
         int h = getWindow().getDecorView().getHeight();
         boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
         if (w > h && isPortrait || w < h && !isPortrait) {
-        int i = w;
-        w = h;
-        h = i;
+            int i = w;
+            w = h;
+            h = i;
         }
 
         float videoAR = (float) mVideoWidth / (float) mVideoHeight;
         float screenAR = (float) w / (float) h;
 
         if (screenAR < videoAR)
-        h = (int) (w / videoAR);
+            h = (int) (w / videoAR);
         else
-        w = (int) (h * videoAR);
+            w = (int) (h * videoAR);
 
         holder.setFixedSize(mVideoWidth, mVideoHeight);
         LayoutParams lp = mSurface.getLayoutParams();
@@ -103,58 +103,58 @@ private void setSize(int width, int height) {
         lp.height = h;
         mSurface.setLayoutParams(lp);
         mSurface.invalidate();
-        }
+    }
 
-/**
- * Creates MediaPlayer and plays video
- *
- * @param media
- */
-private void createPlayer(String media) {
+    /**
+     * Creates MediaPlayer and plays video
+     *
+     * @param media
+     */
+    private void createPlayer(String media) {
         releasePlayer();
         try {
-        if (media.length() > 0) {
-        Toast toast = Toast.makeText(this, media, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0,
-        0);
-        toast.show();
-        }
+//            if (media.length() > 0) {
+//                Toast toast = Toast.makeText(this, media, Toast.LENGTH_LONG);
+//                toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0,
+//                        0);
+//                toast.show();
+//            }
 
-        // Create LibVLC
-        // TODO: make this more robust, and sync with audio demo
-        ArrayList<String> options = new ArrayList<String>();
-        //options.add("--subsdec-encoding <encoding>");
-        options.add("--aout=opensles");
-        options.add("--audio-time-stretch"); // time stretching
-        options.add("-vvv"); // verbosity
-        libvlc = new LibVLC(this, options);
-        holder.setKeepScreenOn(true);
+            // Create LibVLC
+            // TODO: make this more robust, and sync with audio demo
+            ArrayList<String> options = new ArrayList<String>();
+            //options.add("--subsdec-encoding <encoding>");
+            options.add("--aout=opensles");
+            options.add("--audio-time-stretch"); // time stretching
+            options.add("-vvv"); // verbosity
+            libvlc = new LibVLC(this, options);
+            holder.setKeepScreenOn(true);
 
-        // Creating media player
-        mMediaPlayer = new MediaPlayer(libvlc);
-        mMediaPlayer.setEventListener(mPlayerListener);
+            // Creating media player
+            mMediaPlayer = new MediaPlayer(libvlc);
+            mMediaPlayer.setEventListener(mPlayerListener);
 
 // Seting up video output
-final IVLCVout vout = mMediaPlayer.getVLCVout();
-        vout.setVideoView(mSurface);
-        //vout.setSubtitlesView(mSurfaceSubtitles);
-        vout.addCallback(this);
-        vout.attachViews();
+            final IVLCVout vout = mMediaPlayer.getVLCVout();
+            vout.setVideoView(mSurface);
+            //vout.setSubtitlesView(mSurfaceSubtitles);
+            vout.addCallback(this);
+            vout.attachViews();
 
-        Media m = new Media(libvlc, Uri.parse(media));
-        mMediaPlayer.setMedia(m);
-        mMediaPlayer.play();
+            Media m = new Media(libvlc, Uri.parse(media));
+            mMediaPlayer.setMedia(m);
+            mMediaPlayer.play();
         } catch (Exception e) {
-        Toast.makeText(this, "Error in creating player!", Toast
-        .LENGTH_LONG).show();
+            Toast.makeText(this, "Error in creating player!", Toast
+                    .LENGTH_LONG).show();
         }
-        }
+    }
 
-private void releasePlayer() {
+    private void releasePlayer() {
         if (libvlc == null)
-        return;
+            return;
         mMediaPlayer.stop();
-final IVLCVout vout = mMediaPlayer.getVLCVout();
+        final IVLCVout vout = mMediaPlayer.getVLCVout();
         vout.removeCallback(this);
         vout.detachViews();
         holder = null;
@@ -163,63 +163,63 @@ final IVLCVout vout = mMediaPlayer.getVLCVout();
 
         mVideoWidth = 0;
         mVideoHeight = 0;
-        }
+    }
 
-/**
- * Registering callbacks
- */
-private MediaPlayer.EventListener mPlayerListener = new MyPlayerListener(this);
+    /**
+     * Registering callbacks
+     */
+    private MediaPlayer.EventListener mPlayerListener = new MyPlayerListener(this);
 
-@Override
-public void onNewLayout(IVLCVout vout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+    @Override
+    public void onNewLayout(IVLCVout vout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
         if (width * height == 0)
-        return;
+            return;
 
         // store video size
         mVideoWidth = width;
         mVideoHeight = height;
         setSize(mVideoWidth, mVideoHeight);
-        }
-
-@Override
-public void onSurfacesCreated(IVLCVout vout) {
-
-        }
-
-@Override
-public void onSurfacesDestroyed(IVLCVout vout) {
-
-        }
-
-@Override
-public void onHardwareAccelerationError(IVLCVout vlcVout) {
-        Log.e(TAG, "Error with hardware acceleration");
-        this.releasePlayer();
-        Toast.makeText(this, "Error with hardware acceleration", Toast.LENGTH_LONG).show();
-        }
-
-private static class MyPlayerListener implements MediaPlayer.EventListener {
-    private WeakReference<RtmpVlcPlayerActivity> mOwner;
-
-    public MyPlayerListener(RtmpVlcPlayerActivity owner) {
-        mOwner = new WeakReference<RtmpVlcPlayerActivity>(owner);
     }
 
     @Override
-    public void onEvent(MediaPlayer.Event event) {
-        RtmpVlcPlayerActivity player = mOwner.get();
+    public void onSurfacesCreated(IVLCVout vout) {
 
-        switch (event.type) {
-            case MediaPlayer.Event.EndReached:
-                Log.d(TAG, "MediaPlayerEndReached");
-                player.releasePlayer();
-                break;
-            case MediaPlayer.Event.Playing:
-            case MediaPlayer.Event.Paused:
-            case MediaPlayer.Event.Stopped:
-            default:
-                break;
+    }
+
+    @Override
+    public void onSurfacesDestroyed(IVLCVout vout) {
+
+    }
+
+    @Override
+    public void onHardwareAccelerationError(IVLCVout vlcVout) {
+        Log.e(TAG, "Error with hardware acceleration");
+        this.releasePlayer();
+        Toast.makeText(this, "Error with hardware acceleration", Toast.LENGTH_LONG).show();
+    }
+
+    private static class MyPlayerListener implements MediaPlayer.EventListener {
+        private WeakReference<RtmpVlcPlayerActivity> mOwner;
+
+        public MyPlayerListener(RtmpVlcPlayerActivity owner) {
+            mOwner = new WeakReference<RtmpVlcPlayerActivity>(owner);
+        }
+
+        @Override
+        public void onEvent(MediaPlayer.Event event) {
+            RtmpVlcPlayerActivity player = mOwner.get();
+
+            switch (event.type) {
+                case MediaPlayer.Event.EndReached:
+                    Log.d(TAG, "MediaPlayerEndReached");
+                    player.releasePlayer();
+                    break;
+                case MediaPlayer.Event.Playing:
+                case MediaPlayer.Event.Paused:
+                case MediaPlayer.Event.Stopped:
+                default:
+                    break;
+            }
         }
     }
-}
 }
