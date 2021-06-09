@@ -65,7 +65,7 @@
 <!--            android:screenOrientation="landscape"/>-->
         <activity
             android:name=".RtmpVlcPlayerActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>
