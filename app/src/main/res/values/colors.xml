@@ -6,4 +6,10 @@
 
     <color name="streaming_type">#f42c4e</color>
     <color name="video_type">#777777</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="seek_bar_background">#ababab</color>
+    <color name="seek_bar_progress">#04dac5</color>
 </resources>

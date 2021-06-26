@@ -17,4 +17,5 @@
     <string name="show_history_only">過去の放送のみ表示</string>
     <string name="streaming">放送中</string>
     <string name="video">録画</string>
+    <string name="end">終了しました</string>
 </resources>

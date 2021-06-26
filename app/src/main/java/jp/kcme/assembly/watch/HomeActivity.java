@@ -1,7 +1,9 @@
 package jp.kcme.assembly.watch;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import jp.kcme.assembly.watch.state.ShowStreamState;
+import jp.kcme.assembly.watch.util.NetworkUtil;
 
 public class HomeActivity extends CommonActivity {
     private ArrayList<Stream> streamList;
@@ -26,6 +29,19 @@ public class HomeActivity extends CommonActivity {
     private TextView showHistoryOnlyBtn;
     
     private RecyclerView streamListview;
+
+    /**
+     * 再生中か否か
+     * キー名 playing
+     */
+    private SharedPreferences playingPrefer;
+    /**
+     * 取得したurl
+     * キー名 url
+     */
+    private SharedPreferences urlPrefer;
+
+    private Stream stream = new Stream();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +115,33 @@ public class HomeActivity extends CommonActivity {
                 state.toggleMode(ShowStreamState.SHOW_ONLY_HISTORY_MODE);
             }
         });
+
+        //TODO リストから選択した動画のURLをRtmpVlcPlayerActivityにintentで渡す intent_nameはURL_STRING
     }
 
+    /**
+     * 再生中のまま異常終了してしまったとき（かつネットが有効のとき）に復旧させる
+     */
     @Override
     protected void onResume() {
         super.onResume();
         state.fetchStreams();
+
+        playingPrefer = getSharedPreferences("playing", MODE_PRIVATE);
+        boolean playing = playingPrefer.getBoolean("playing",false);
+
+        boolean netStatus = NetworkUtil.isOnline(this);
+
+        if (playing && netStatus) {
+            urlPrefer = getSharedPreferences("url", MODE_PRIVATE);
+            //TODO jsonから取得したURLを反映させるようにする
+            String urlString = urlPrefer.getString("url", "https://demo-gikai.s3.ap-northeast-1.amazonaws.com/video/80808/2021-06-22/7d30050fb44be9a8f96059e9e9ceebc3.mp4");
+
+            Log.d(TAG, urlString);
+
+            Intent intent = new Intent(getApplication(), RtmpVlcPlayerActivity.class);
+            intent.putExtra("URL_STRING", urlString);
+            startActivity(intent);
+        }
     }
 }
