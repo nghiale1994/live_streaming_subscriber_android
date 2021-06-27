@@ -138,7 +138,7 @@ public class Stream implements Comparable {
         return 0;
     }
 
-    static class Thumbnail {
+    public static class Thumbnail {
         @Expose
         private int width;
         @Expose
@@ -189,7 +189,7 @@ public class Stream implements Comparable {
         }
     }
 
-    static class Video {
+    public static class Video {
         @Expose
         private String url = "";
         @Expose

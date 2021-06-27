@@ -136,7 +136,7 @@ public class ShowStreamState {
         for (Stream stream : streamList) {
             if (stream.isStreaming()) {
                 streamingList.add(stream);
-            } else {
+            } else if(stream.getVideo() != null && !AppUtils.get().isBlank(stream.getVideo().getUrl())) {
                 historyList.add(stream);
             }
         }
