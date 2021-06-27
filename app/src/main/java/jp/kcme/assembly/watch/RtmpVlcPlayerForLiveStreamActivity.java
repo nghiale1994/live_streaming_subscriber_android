@@ -50,6 +50,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     protected void onResume() {
         super.onResume();
         createPlayer(mFilePath);
+        PlayerManager.getInstance().scheduleReconnect(mMediaPlayer);
     }
 
     @Override
@@ -211,8 +212,12 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
             Log.d(TAG, "event's type: " + Integer.toHexString(event.type));
 
             switch (event.type) {
+                case MediaPlayer.Event.EncounteredError:
+                    Log.w(TAG, "MediaPlayer.Event.EncounteredError");
+                    PlayerManager.getInstance().scheduleReconnect(player.mMediaPlayer);
+                    break;
                 case MediaPlayer.Event.EndReached:
-                    Log.d(TAG, "MediaPlayer.Event.EndReached");
+                    Log.w(TAG, "MediaPlayer.Event.EndReached");
                     PlayerManager.getInstance().scheduleReconnect(player.mMediaPlayer);
                     break;
                 case MediaPlayer.Event.Playing:

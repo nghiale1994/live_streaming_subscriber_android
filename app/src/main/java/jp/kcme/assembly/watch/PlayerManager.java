@@ -15,6 +15,8 @@ public class PlayerManager {
     private final int RECONNECT_DELAY_IN_MS = 5000;
     private final int RECONNECT_INTERVAL_IN_MS = 5000;
 
+    private boolean isReconnecting;
+
     public static PlayerManager getInstance() {
         if (INSTANCE == null) {
             synchronized (PlayerManager.class) {
@@ -26,31 +28,55 @@ public class PlayerManager {
         return INSTANCE;
     }
 
+    private boolean hasValidPlayer() {
+        if (player == null) {
+            reset();
+            return false;
+        }
+        return true;
+    }
+
+    private void reset() {
+        player = null;
+        if (reconnectTimer != null) {
+            reconnectTimer.cancel();
+            reconnectTimer = null;
+        }
+        isReconnecting = false;
+    }
+
     public void scheduleReconnect(MediaPlayer player) {
-        Log.d(AppUtils.get().tag(), "scheduleReconnect every " + RECONNECT_INTERVAL_IN_MS + " ms for player: " + player);
+        Log.i(AppUtils.get().tag(), "scheduleReconnect every " + RECONNECT_INTERVAL_IN_MS + " ms for player: " + player);
         this.player = player;
 
-        if( reconnectTimer == null){
-            reconnectTimer = new Timer();
+        if (!hasValidPlayer()) {
+            Log.w(AppUtils.get().tag(), "No player to scheduleReconnect");
+            return;
         }
 
-        reconnectTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                doReconnectPlayer();
-            }
-        }, RECONNECT_DELAY_IN_MS, RECONNECT_INTERVAL_IN_MS);
+        if (reconnectTimer == null) {
+            reconnectTimer = new Timer();
+            reconnectTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    doReconnectPlayer();
+                    isReconnecting = true;
+                }
+            }, RECONNECT_DELAY_IN_MS, RECONNECT_INTERVAL_IN_MS);
+        } else {
+            Log.i(AppUtils.get().tag(), "Already scheduled for player: " + player);
+        }
     }
 
     private void doReconnectPlayer() {
         Log.d(AppUtils.get().tag(), "doReconnectPlayer: " + player);
 
-        if (player == null) {
+        if (!hasValidPlayer()) {
             Log.w(AppUtils.get().tag(), "No player to reconnect");
             return;
         }
 
-        if (!player.isPlaying()){
+        if (!player.isPlaying()) {
             Log.d(AppUtils.get().tag(), "player's state: " + player.getPlayerState());
             Log.i(AppUtils.get().tag(), "need replay: " + !player.isPlaying());
             player.stop();
@@ -60,10 +86,10 @@ public class PlayerManager {
 
     public void stopReconnect() {
         Log.d(AppUtils.get().tag(), "stopReconnect for player: " + player);
-        if (reconnectTimer != null) {
-            reconnectTimer.cancel();
-            reconnectTimer = null;
-        }
-        player = null;
+        reset();
+    }
+
+    public boolean isReconnecting() {
+        return isReconnecting;
     }
 }
