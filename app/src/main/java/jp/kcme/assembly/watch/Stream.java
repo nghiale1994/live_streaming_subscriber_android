@@ -33,6 +33,8 @@ public class Stream implements Comparable {
     @Expose
     private Video video = new Video();
 
+    private int type;
+
     public String getId() {
         return id;
     }
@@ -95,6 +97,15 @@ public class Stream implements Comparable {
 
     public void setVideo(Video video) {
         this.video = video;
+    }
+
+    public int getType() {
+        if (isStreaming()) {
+            return Type.Streaming;
+        } else if (getVideo() != null && !AppUtils.get().isBlank(getVideo().getUrl())) {
+            return Type.History;
+        }
+        return Type.Hidden;
     }
 
     @Override
@@ -228,5 +239,11 @@ public class Stream implements Comparable {
             AppUtils.get().printJson(this);
             return "";
         }
+    }
+
+    public static class Type {
+        public static final int Hidden = 0;
+        public static final int Streaming = 10;
+        public static final int History = 20;
     }
 }
