@@ -81,18 +81,18 @@ public class CommonActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG,"onStop()");
+        Log.d(AppUtils.get().tag(), "onStop()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG,"onPause()");
+        Log.d(AppUtils.get().tag(),"onPause()");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy()");
+        Log.d(AppUtils.get().tag(),"onDestroy()");
     }
 }

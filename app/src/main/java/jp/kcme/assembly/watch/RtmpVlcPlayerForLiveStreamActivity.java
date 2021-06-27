@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 
 
 public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implements IVLCVout.Callback {
-    public final static String TAG = "RtmpVlcPlayerActivity";
+    public final static String TAG = "LiveStreamActivity";
     private String mFilePath;
     private SurfaceView mSurface;
     private SurfaceHolder holder;
@@ -209,14 +208,23 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
         public void onEvent(MediaPlayer.Event event) {
             RtmpVlcPlayerForLiveStreamActivity player = mOwner.get();
 
+            Log.d(TAG, "event's type: " + Integer.toHexString(event.type));
+
             switch (event.type) {
                 case MediaPlayer.Event.EndReached:
-                    Log.d(TAG, "MediaPlayerEndReached");
-                    player.releasePlayer();
+                    Log.d(TAG, "MediaPlayer.Event.EndReached");
+                    PlayerManager.getInstance().scheduleReconnect(player.mMediaPlayer);
                     break;
                 case MediaPlayer.Event.Playing:
+                    Log.d(TAG, "MediaPlayer.Event.Playing");
+                    PlayerManager.getInstance().stopReconnect();
+                    break;
                 case MediaPlayer.Event.Paused:
+                    Log.d(TAG, "MediaPlayer.Event.Paused");
+                    break;
                 case MediaPlayer.Event.Stopped:
+                    Log.d(TAG, "MediaPlayer.Event.Stopped");
+                    break;
                 default:
                     break;
             }
