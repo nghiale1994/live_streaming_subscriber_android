@@ -36,7 +36,7 @@ public class AppService {
 //        httpClient.addInterceptor(logging);
 
         return new Retrofit.Builder()
-                .baseUrl(Properties.API_PREFIX)
+                .baseUrl(Properties.API_TEST_PREFIX)
                 .addConverterFactory(GsonConverterFactory.create(gson))
 //                .addCallAdapterFactory(Java7CallAdapterFactory.create())
 //                .client(httpClient.build())

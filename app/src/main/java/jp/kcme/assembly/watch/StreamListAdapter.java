@@ -131,9 +131,14 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
 ////                context.startActivity(intent);
 
 //                Intent intent = new Intent(context, RTMPPlayerActivity.class);
-                Intent intent = new Intent(context, RtmpVlcPlayerActivity.class);
-                if (!stream.getChannelId().equals("")) {
-                    intent.putExtra("channelId", stream.getChannelId());
+                Intent intent = null;
+                if (stream.isStreaming()) {
+                    intent = new Intent(context, RtmpVlcPlayerForLiveStreamActivity.class);
+                    if (!stream.getChannelId().equals("")) {
+                        intent.putExtra("channelId", stream.getChannelId());
+                    }
+                } else {
+                    intent = new Intent(context, RtmpVlcPlayerActivity.class);
                 }
                 context.startActivity(intent);
             }

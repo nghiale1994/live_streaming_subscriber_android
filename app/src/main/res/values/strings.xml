@@ -18,4 +18,6 @@
     <string name="streaming">放送中</string>
     <string name="video">録画</string>
     <string name="end">終了しました</string>
+
+    <string name="dialog_reconnecting">接続中</string>
 </resources>
