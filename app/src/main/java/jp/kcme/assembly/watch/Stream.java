@@ -33,6 +33,8 @@ public class Stream implements Comparable {
     @Expose
     private Video video = new Video();
 
+    private int type;
+
     public String getId() {
         return id;
     }
@@ -97,6 +99,15 @@ public class Stream implements Comparable {
         this.video = video;
     }
 
+    public int getType() {
+        if (isStreaming()) {
+            return Type.Streaming;
+        } else if (getVideo() != null && !AppUtils.get().isBlank(getVideo().getUrl())) {
+            return Type.History;
+        }
+        return Type.Hidden;
+    }
+
     @Override
     public String toString() {
         Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
@@ -138,7 +149,7 @@ public class Stream implements Comparable {
         return 0;
     }
 
-    static class Thumbnail {
+    public static class Thumbnail {
         @Expose
         private int width;
         @Expose
@@ -189,7 +200,7 @@ public class Stream implements Comparable {
         }
     }
 
-    static class Video {
+    public static class Video {
         @Expose
         private String url = "";
         @Expose
@@ -228,5 +239,11 @@ public class Stream implements Comparable {
             AppUtils.get().printJson(this);
             return "";
         }
+    }
+
+    public static class Type {
+        public static final int Hidden = 0;
+        public static final int Streaming = 10;
+        public static final int History = 20;
     }
 }

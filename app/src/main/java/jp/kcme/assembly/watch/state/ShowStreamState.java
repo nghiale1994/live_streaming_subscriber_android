@@ -134,10 +134,15 @@ public class ShowStreamState {
         ArrayList<Stream> sortedList = new ArrayList<>();
 
         for (Stream stream : streamList) {
-            if (stream.isStreaming()) {
-                streamingList.add(stream);
-            } else {
-                historyList.add(stream);
+            switch (stream.getType()) {
+                case Stream.Type.Streaming:
+                    streamingList.add(stream);
+                    break;
+                case Stream.Type.History:
+                    historyList.add(stream);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -156,14 +161,14 @@ public class ShowStreamState {
         switch (currentMode) {
             case SHOW_ONLY_STREAMING_MODE:
                 for (Stream stream : streamList) {
-                    if (stream.isStreaming()) {
+                    if (stream.getType() == Stream.Type.Streaming) {
                         filteredList.add(stream);
                     }
                 }
                 break;
             case SHOW_ONLY_HISTORY_MODE:
                 for (Stream stream : streamList) {
-                    if (!stream.isStreaming()) {
+                    if (stream.getType() == Stream.Type.History) {
                         filteredList.add(stream);
                     }
                 }

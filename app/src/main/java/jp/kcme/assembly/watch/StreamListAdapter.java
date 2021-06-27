@@ -87,12 +87,17 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         final Stream stream = streamList.get(viewHolder.getAdapterPosition());
 
-        if (stream.isStreaming()) {
-            viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.streaming_type_background));
-            viewHolder.getStreamType().setText(R.string.streaming);
-        } else {
-            viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.video_type_background));
-            viewHolder.getStreamType().setText(R.string.video);
+        switch (stream.getType()) {
+            case Stream.Type.Streaming:
+                viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.streaming_type_background));
+                viewHolder.getStreamType().setText(R.string.streaming);
+                break;
+            case Stream.Type.History:
+                viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.video_type_background));
+                viewHolder.getStreamType().setText(R.string.video);
+                break;
+            default:
+                break;
         }
 
         viewHolder.getTitle().setText(stream.getTitle());
@@ -131,7 +136,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
 ////                context.startActivity(intent);
 
 //                Intent intent = new Intent(context, RTMPPlayerActivity.class);
-                Intent intent = null;
+                Intent intent;
                 if (stream.isStreaming()) {
                     intent = new Intent(context, RtmpVlcPlayerForLiveStreamActivity.class);
                     if (!stream.getChannelId().equals("")) {
