@@ -30,6 +30,8 @@ public class Stream implements Comparable {
     private boolean isStreaming;
     @Expose
     private HashMap<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
+    @Expose
+    private Video video = new Video();
 
     public String getId() {
         return id;
@@ -85,6 +87,14 @@ public class Stream implements Comparable {
 
     public void setThumbnails(HashMap<String, Thumbnail> thumbnails) {
         this.thumbnails = thumbnails;
+    }
+
+    public Video getVideo() {
+        return video;
+    }
+
+    public void setVideo(Video video) {
+        this.video = video;
     }
 
     @Override
@@ -169,6 +179,47 @@ public class Stream implements Comparable {
 
         public void setUrl(String url) {
             this.url = url;
+        }
+
+        @Override
+        public String toString() {
+            Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
+            AppUtils.get().printJson(this);
+            return "";
+        }
+    }
+
+    static class Video {
+        @Expose
+        private String url = "";
+        @Expose
+        private String duration = "";
+        @Expose
+        @SerializedName("created_date")
+        private String createdDate = "";
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getDuration() {
+            return duration;
+        }
+
+        public void setDuration(String duration) {
+            this.duration = duration;
+        }
+
+        public String getCreatedDate() {
+            return createdDate;
+        }
+
+        public void setCreatedDate(String createdDate) {
+            this.createdDate = createdDate;
         }
 
         @Override
