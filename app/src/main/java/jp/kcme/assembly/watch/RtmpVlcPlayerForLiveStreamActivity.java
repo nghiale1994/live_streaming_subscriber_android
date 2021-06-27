@@ -32,7 +32,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.frame_rtmp_vlc_player);
+        setContentView(R.layout.frame_rtmp_vlc_player_for_livestream);
 
         mFilePath = "rtmp://beetle.mstgikai.com/live/" + getIntent().getStringExtra("channelId");
 
