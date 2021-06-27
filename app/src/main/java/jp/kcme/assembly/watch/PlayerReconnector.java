@@ -34,7 +34,7 @@ public class PlayerReconnector {
         if (player == null) {
             reset();
         }
-        return player == null;
+        return player != null;
     }
 
     private void reset() {
@@ -74,7 +74,7 @@ public class PlayerReconnector {
     private void doReconnectPlayer() {
         Log.d(AppUtils.get().tag(), "doReconnectPlayer: " + player);
 
-        if (hasValidPlayer()) {
+        if (!hasValidPlayer()) {
             Log.w(AppUtils.get().tag(), "No player to reconnect");
             return;
         }
