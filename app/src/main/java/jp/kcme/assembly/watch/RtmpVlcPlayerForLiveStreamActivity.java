@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 
-public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Callback {
+public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implements IVLCVout.Callback {
     public final static String TAG = "RtmpVlcPlayerActivity";
     private String mFilePath;
     private SurfaceView mSurface;
@@ -199,15 +199,15 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
     }
 
     private static class MyPlayerListener implements MediaPlayer.EventListener {
-        private WeakReference<RtmpVlcPlayerActivity> mOwner;
+        private WeakReference<RtmpVlcPlayerForLiveStreamActivity> mOwner;
 
-        public MyPlayerListener(RtmpVlcPlayerActivity owner) {
-            mOwner = new WeakReference<RtmpVlcPlayerActivity>(owner);
+        public MyPlayerListener(RtmpVlcPlayerForLiveStreamActivity owner) {
+            mOwner = new WeakReference<RtmpVlcPlayerForLiveStreamActivity>(owner);
         }
 
         @Override
         public void onEvent(MediaPlayer.Event event) {
-            RtmpVlcPlayerActivity player = mOwner.get();
+            RtmpVlcPlayerForLiveStreamActivity player = mOwner.get();
 
             switch (event.type) {
                 case MediaPlayer.Event.EndReached:
