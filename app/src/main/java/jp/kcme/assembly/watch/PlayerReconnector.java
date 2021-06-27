@@ -7,6 +7,10 @@ import org.videolan.libvlc.MediaPlayer;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * This class only manages the reconnection of
+ * 1 player at a time
+ */
 public class PlayerReconnector {
     private static PlayerReconnector INSTANCE;
     private MediaPlayer player;
@@ -14,8 +18,6 @@ public class PlayerReconnector {
     private Timer reconnectTimer;
     private final int RECONNECT_DELAY_IN_MS = 5000;
     private final int RECONNECT_INTERVAL_IN_MS = 5000;
-
-    private boolean isReconnecting;
 
     public static PlayerReconnector getInstance() {
         if (INSTANCE == null) {
@@ -31,9 +33,8 @@ public class PlayerReconnector {
     private boolean hasValidPlayer() {
         if (player == null) {
             reset();
-            return false;
         }
-        return true;
+        return player == null;
     }
 
     private void reset() {
@@ -42,7 +43,6 @@ public class PlayerReconnector {
             reconnectTimer.cancel();
             reconnectTimer = null;
         }
-        isReconnecting = false;
     }
 
     /**
@@ -64,7 +64,6 @@ public class PlayerReconnector {
                 @Override
                 public void run() {
                     doReconnectPlayer();
-                    isReconnecting = true;
                 }
             }, RECONNECT_DELAY_IN_MS, RECONNECT_INTERVAL_IN_MS);
         } else {
@@ -75,7 +74,7 @@ public class PlayerReconnector {
     private void doReconnectPlayer() {
         Log.d(AppUtils.get().tag(), "doReconnectPlayer: " + player);
 
-        if (!hasValidPlayer()) {
+        if (hasValidPlayer()) {
             Log.w(AppUtils.get().tag(), "No player to reconnect");
             return;
         }
@@ -91,9 +90,5 @@ public class PlayerReconnector {
     public void stopReconnect() {
         Log.d(AppUtils.get().tag(), "stopReconnect for player: " + player);
         reset();
-    }
-
-    public boolean isReconnecting() {
-        return isReconnecting;
     }
 }
