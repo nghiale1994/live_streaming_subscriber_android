@@ -1,13 +1,19 @@
 package jp.kcme.assembly.watch;
 
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
@@ -27,6 +33,8 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     private MediaPlayer mMediaPlayer = null;
     private int mVideoWidth;
     private int mVideoHeight;
+
+    private AlertDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +58,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     protected void onResume() {
         super.onResume();
         createPlayer(mFilePath);
-        PlayerManager.getInstance().scheduleReconnect(mMediaPlayer);
+        scheduleReconnectPLayer();
     }
 
     @Override
@@ -166,6 +174,57 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     }
 
     /**
+     * プレイヤーの再度再生のスケジュールを立てる
+     */
+    private void scheduleReconnectPLayer() {
+        PlayerReconnector.getInstance().scheduleReconnect(mMediaPlayer);
+        showReconnectingDialog();
+    }
+
+    private void stopReconnectPLayer() {
+        PlayerReconnector.getInstance().stopReconnect();
+        hideReconnectingDialog();
+    }
+
+    /**
+     * プレイヤーの再度再生をリトライする度に「接続中」ダイヤログを表示する
+     */
+    // TODO: 6/27/2021  ダイヤログのレイアウトを変更すること
+    private void showReconnectingDialog() {
+        if (dialog == null) {
+            final ProgressBar progressBar = new ProgressBar(this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(5,5,5,5);
+            lp.gravity = Gravity.START;
+            progressBar.setLayoutParams(lp);
+            progressBar.setPadding(5,5,5,5);
+
+            dialog = new AlertDialog.Builder(this)
+                    .setTitle(getResources().getString(R.string.dialog_reconnecting))
+                    .setView(progressBar)
+                    .setCancelable(true)
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            Log.d(AppUtils.get().tag(), "Hide reconnecting dialog");
+                        }
+                    })
+                    .create();
+        }
+
+        Log.d(AppUtils.get().tag(), "Show reconnecting dialog");
+        dialog.show();
+    }
+
+    private void hideReconnectingDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+    }
+
+    /**
      * Registering callbacks
      */
     private MediaPlayer.EventListener mPlayerListener = new MyPlayerListener(this);
@@ -214,15 +273,15 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
             switch (event.type) {
                 case MediaPlayer.Event.EncounteredError:
                     Log.w(TAG, "MediaPlayer.Event.EncounteredError");
-                    PlayerManager.getInstance().scheduleReconnect(player.mMediaPlayer);
+                    player.scheduleReconnectPLayer();
                     break;
                 case MediaPlayer.Event.EndReached:
                     Log.w(TAG, "MediaPlayer.Event.EndReached");
-                    PlayerManager.getInstance().scheduleReconnect(player.mMediaPlayer);
+                    player.scheduleReconnectPLayer();
                     break;
                 case MediaPlayer.Event.Playing:
                     Log.d(TAG, "MediaPlayer.Event.Playing");
-                    PlayerManager.getInstance().stopReconnect();
+                    player.stopReconnectPLayer();
                     break;
                 case MediaPlayer.Event.Paused:
                     Log.d(TAG, "MediaPlayer.Event.Paused");

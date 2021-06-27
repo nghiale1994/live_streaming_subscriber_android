@@ -7,8 +7,8 @@ import org.videolan.libvlc.MediaPlayer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class PlayerManager {
-    private static PlayerManager INSTANCE;
+public class PlayerReconnector {
+    private static PlayerReconnector INSTANCE;
     private MediaPlayer player;
 
     private Timer reconnectTimer;
@@ -17,11 +17,11 @@ public class PlayerManager {
 
     private boolean isReconnecting;
 
-    public static PlayerManager getInstance() {
+    public static PlayerReconnector getInstance() {
         if (INSTANCE == null) {
-            synchronized (PlayerManager.class) {
+            synchronized (PlayerReconnector.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new PlayerManager();
+                    INSTANCE = new PlayerReconnector();
                 }
             }
         }
@@ -45,6 +45,10 @@ public class PlayerManager {
         isReconnecting = false;
     }
 
+    /**
+     * プレイヤーの再生スケジュールを立てる
+     * @param player nullの場合、何もしない
+     */
     public void scheduleReconnect(MediaPlayer player) {
         Log.i(AppUtils.get().tag(), "scheduleReconnect every " + RECONNECT_INTERVAL_IN_MS + " ms for player: " + player);
         this.player = player;
