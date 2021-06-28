@@ -1,11 +1,17 @@
 package jp.kcme.assembly.watch;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
-public class Stream {
+public class Stream implements Comparable {
 
     @Expose
     private String id = "";
@@ -17,10 +23,17 @@ public class Stream {
     @Expose
     private String subtitle = "";
     @Expose
+    @SerializedName("created_date")
+    private String createdDate = "";
+    @Expose
     @SerializedName("is_streaming")
     private boolean isStreaming;
     @Expose
     private HashMap<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
+    @Expose
+    private Video video = new Video();
+
+    private int type;
 
     public String getId() {
         return id;
@@ -54,6 +67,14 @@ public class Stream {
         this.subtitle = subtitle;
     }
 
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public boolean isStreaming() {
         return isStreaming;
     }
@@ -70,24 +91,71 @@ public class Stream {
         this.thumbnails = thumbnails;
     }
 
-    @Override
-    public String toString() {
-        return "Stream{" +
-                "id='" + id + '\'' +
-                ", channelId='" + channelId + '\'' +
-                ", title='" + title + '\'' +
-                ", subtitle='" + subtitle + '\'' +
-                ", isStreaming=" + isStreaming +
-                ", thumbnails=" + thumbnails +
-                '}';
+    public Video getVideo() {
+        return video;
     }
 
-    static class Thumbnail {
+    public void setVideo(Video video) {
+        this.video = video;
+    }
+
+    public int getType() {
+        if (isStreaming()) {
+            return Type.Streaming;
+        } else if (getVideo() != null && !AppUtils.get().isBlank(getVideo().getUrl())) {
+            return Type.History;
+        }
+        return Type.Hidden;
+    }
+
+    @Override
+    public String toString() {
+        Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
+        AppUtils.get().printJson(this);
+        return "";
+    }
+
+    public static Date parseDate(String dateString) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        Date value;
+        try {
+            value = df1.parse(dateString);
+        } catch (ParseException e1) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            try {
+                value = df2.parse(dateString);
+            } catch (ParseException e2) {
+                return null;
+            }
+        }
+        return value;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Date thisDate = parseDate(this.getCreatedDate());
+        Date thatDate = parseDate(((Stream) o).getCreatedDate());
+        try {
+            if (thatDate.after(thisDate)) {
+                return 1;
+            } else if (thatDate.before(thisDate)) {
+                return -1;
+            }
+        } catch (Exception e) {
+            Log.e(AppUtils.get().tag(), "Exception: " + e);
+        }
+        return 0;
+    }
+
+    public static class Thumbnail {
         @Expose
         private int width;
         @Expose
         private int height;
         @Expose
+        @SerializedName("created_date")
         private String createdDate = "";
         @Expose
         private String url = "";
@@ -126,12 +194,56 @@ public class Stream {
 
         @Override
         public String toString() {
-            return "Thumbnail{" +
-                    "width=" + width +
-                    ", height=" + height +
-                    ", createdDate='" + createdDate + '\'' +
-                    ", url='" + url + '\'' +
-                    '}';
+            Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
+            AppUtils.get().printJson(this);
+            return "";
         }
+    }
+
+    public static class Video {
+        @Expose
+        private String url = "";
+        @Expose
+        private String duration = "";
+        @Expose
+        @SerializedName("created_date")
+        private String createdDate = "";
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getDuration() {
+            return duration;
+        }
+
+        public void setDuration(String duration) {
+            this.duration = duration;
+        }
+
+        public String getCreatedDate() {
+            return createdDate;
+        }
+
+        public void setCreatedDate(String createdDate) {
+            this.createdDate = createdDate;
+        }
+
+        @Override
+        public String toString() {
+            Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
+            AppUtils.get().printJson(this);
+            return "";
+        }
+    }
+
+    public static class Type {
+        public static final int Hidden = 0;
+        public static final int Streaming = 10;
+        public static final int History = 20;
     }
 }

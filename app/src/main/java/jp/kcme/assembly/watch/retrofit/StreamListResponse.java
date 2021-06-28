@@ -1,9 +1,12 @@
 package jp.kcme.assembly.watch.retrofit;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 
+import jp.kcme.assembly.watch.AppUtils;
 import jp.kcme.assembly.watch.Stream;
 
 public class StreamListResponse {
@@ -30,9 +33,8 @@ public class StreamListResponse {
 
     @Override
     public String toString() {
-        return "StreamListResponse{" +
-                "status='" + status + '\'' +
-                ", data=" + data +
-                '}';
+        Log.i(AppUtils.get().tag(), this.getClass().getSimpleName());
+        AppUtils.get().printJson(this);
+        return "";
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:Android="http://schemas.android.com/apk/res/android"
+    Android:shape="oval">
+    <size
+        Android:height="@dimen/seek_bar_thumb_size"
+        Android:width="@dimen/seek_bar_thumb_size"
+        />
+    <solid Android:color="@color/seek_bar_progress"/>
+</shape>

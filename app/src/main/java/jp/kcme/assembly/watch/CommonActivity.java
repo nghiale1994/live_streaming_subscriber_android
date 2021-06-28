@@ -3,6 +3,7 @@ package jp.kcme.assembly.watch;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -75,5 +76,23 @@ public class CommonActivity extends AppCompatActivity {
                 }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(AppUtils.get().tag(), "onStop()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(AppUtils.get().tag(),"onPause()");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(AppUtils.get().tag(),"onDestroy()");
     }
 }

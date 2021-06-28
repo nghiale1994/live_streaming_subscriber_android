@@ -1,7 +1,12 @@
 package jp.kcme.assembly.watch;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +15,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.browser.trusted.ScreenOrientation;
+import androidx.browser.trusted.TrustedWebActivityDisplayMode;
+import androidx.browser.trusted.TrustedWebActivityIntent;
+import androidx.browser.trusted.TrustedWebActivityIntentBuilder;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.androidbrowserhelper.trusted.TwaLauncher;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,18 +41,21 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
      * (custom ViewHolder).
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView streamType;
         private final ImageView thumbnail;
         private final TextView title;
         private final TextView subtitle;
 
-        private Context context;
-        private Stream stream;
-
         public ViewHolder(View view) {
             super(view);
+            streamType = view.findViewById(R.id.stream_type);
             thumbnail = view.findViewById(R.id.thumbnail);
             title = view.findViewById(R.id.title);
             subtitle = view.findViewById(R.id.subtitle);
+        }
+
+        public TextView getStreamType() {
+            return streamType;
         }
 
         public TextView getTitle() {
@@ -58,43 +71,103 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.recyclerview_stream_item, viewGroup, false);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recyclerview_stream_item, parent, false);
 
-        return new ViewHolder(view);
+        ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+        layoutParams.height = (int) (parent.getHeight() * 0.3);
+        itemView.setLayoutParams(layoutParams);
+
+        return new ViewHolder(itemView);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        final Stream stream = streamList.get(position);
+        final Stream stream = streamList.get(viewHolder.getAdapterPosition());
+
+        switch (stream.getType()) {
+            case Stream.Type.Streaming:
+                viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.streaming_type_background));
+                viewHolder.getStreamType().setText(R.string.streaming);
+                break;
+            case Stream.Type.History:
+                viewHolder.getStreamType().setBackground(context.getDrawable(R.drawable.video_type_background));
+                viewHolder.getStreamType().setText(R.string.video);
+                break;
+            default:
+                break;
+        }
 
         viewHolder.getTitle().setText(stream.getTitle());
         viewHolder.getSubtitle().setText(stream.getSubtitle());
 
         Stream.Thumbnail thumbnail = stream.getThumbnails().get("mobile");
         if(thumbnail != null) {
+            Log.i(AppUtils.get().tag(), "Thumbnail's url: " + thumbnail.getUrl());
             Picasso.get().load(thumbnail.getUrl()).into(viewHolder.getThumbnail());
+        } else {
+            viewHolder.getThumbnail().setImageResource(0);
         }
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://spider01.mstgikai.com:8888/stream/watch";
-                if (!stream.getChannelId().equals("")) {
-                    url += "?channel=" + stream.getChannelId();
-                }
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                CustomTabsIntent customTabsIntent = builder.build();
+//                String url = Properties.API_PREFIX + Properties.WATCH_STREAM;
+//                if (!stream.getChannelId().equals("")) {
+//                    url += "?channel=" + stream.getChannelId();
+//                }
+////                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+////                CustomTabsIntent customTabsIntent = builder.build();
+////
+////                customTabsIntent.intent.setPackage("com.android.chrome");
+////                customTabsIntent.launchUrl(context, Uri.parse(url));
+//
+//                TrustedWebActivityIntentBuilder builder = new TrustedWebActivityIntentBuilder(Uri.parse(url))
+//                        .setScreenOrientation(ScreenOrientation.LANDSCAPE);
+//                TwaLauncher launcher = new TwaLauncher(context);
+//                launcher.launch(builder, null, null, null);
+//
+////                Intent intent = new Intent(context, com.google.androidbrowserhelper.trusted.LauncherActivity.class);
+////                intent.setData(Uri.parse(url));
+//////                intent.setData(Uri.parse("https://google.com"));
+////                intent.setAction(Intent.ACTION_VIEW);
+////                context.startActivity(intent);
 
-                customTabsIntent.intent.setPackage("com.android.chrome");
-                customTabsIntent.launchUrl(context, Uri.parse(url));
+//                Intent intent = new Intent(context, RTMPPlayerActivity.class);
+                Intent intent;
+                if (stream.isStreaming()) {
+                    intent = new Intent(context, RtmpVlcPlayerForLiveStreamActivity.class);
+                    if (!stream.getChannelId().equals("")) {
+                        intent.putExtra("channelId", stream.getChannelId());
+                    }
+                } else {
+                    intent = new Intent(context, RtmpVlcPlayerActivity.class);
+                }
+                context.startActivity(intent);
             }
         });
+    }
+
+    public void setData(ArrayList<Stream> newStreams) {
+        streamList.clear();
+        streamList.addAll(newStreams);
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
         return streamList.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 }
