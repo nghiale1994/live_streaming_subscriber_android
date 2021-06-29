@@ -1,6 +1,7 @@
 package jp.kcme.assembly.watch;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,9 +9,13 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -21,18 +26,39 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.TimeZone;
 
 public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implements IVLCVout.Callback {
     public final static String TAG = "LiveStreamActivity";
+
     private String mFilePath;
     private SurfaceView mSurface;
     private SurfaceHolder holder;
     private LibVLC libvlc;
-    private MediaPlayer mMediaPlayer = null;
+    private static MediaPlayer mMediaPlayer = null;
     private int mVideoWidth;
     private int mVideoHeight;
+
+    private boolean showButton;
+    private SeekBar seekBar;
+    private TextView nowTimeText;
+    private TextView slashText;
+    private View cloth;
+
+    /**
+     * 再生中か否か
+     * キー名 playing
+     * //TODO 今は状態を保存してるだけで特に使ってない
+     */
+    private SharedPreferences playingPrefer;
+    /**
+     * 取得したURL
+     * キー名 url
+     * //TODO 今は状態を保存してるだけで特に使ってない
+     */
+    private SharedPreferences urlPrefer;
 
     private AlertDialog dialog;
 
@@ -41,11 +67,94 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.frame_rtmp_vlc_player_for_livestream);
 
-        mFilePath = "rtmp://beetle.mstgikai.com/live/" + getIntent().getStringExtra("channelId");
+        mFilePath = Properties.API_TEST_RTMP_PREFIX + getIntent().getStringExtra("channelId");
+
+        playingPrefer = getSharedPreferences("playing", MODE_PRIVATE);
+        SharedPreferences.Editor editor = playingPrefer.edit();
+        editor.putBoolean("playing",true);
+        editor.apply();
+
+        urlPrefer = getSharedPreferences("url", MODE_PRIVATE);
+        SharedPreferences.Editor editor2 = urlPrefer.edit();
+        editor2.putString("url",mFilePath);
+        editor2.apply();
 
         Log.d(TAG, "Playing: " + mFilePath);
-        mSurface = (SurfaceView) findViewById(R.id.surface);
+        mSurface = (SurfaceView) findViewById(R.id.live_surface);
         holder = mSurface.getHolder();
+
+        cloth = findViewById(R.id.live_cloth);
+        cloth.setAlpha(0);
+
+        ImageView exitButton = findViewById(R.id.live_exit);
+        exitButton.setVisibility(View.GONE);
+
+        ImageView playButton = findViewById(R.id.live_play);
+        playButton.setVisibility(View.GONE);
+
+        nowTimeText = findViewById(R.id.live_nowTime);
+        nowTimeText.setVisibility(View.GONE);
+
+        slashText = findViewById(R.id.live_slash);
+        slashText.setVisibility(View.GONE);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
+        String timeFormatted = formatter.format(82000);
+
+        Log.d(TAG,"ttimeFormatted" + timeFormatted);
+        nowTimeText.setText(timeFormatted);
+
+        TextView maxTimeText = findViewById(R.id.live_maxTime);
+        maxTimeText.setText(timeFormatted);
+        maxTimeText.setVisibility(View.GONE);
+
+        showButton = false;
+
+        seekBar = findViewById(R.id.live_seekbar);
+        seekBar.setProgress(0);
+        //TODO 録画の時間を取得できるようにする
+        seekBar.setMax(82000); //動画の時間が0:01:22の場合82000ミリ秒
+        seekBar.setVisibility(View.GONE);
+
+        /**
+         * Viewクリックでボタンの表示非表示切り替え
+         * ただし配信のときはmaxTimeTextとseekBarとplayButtonは非表示のまま
+         */
+        cloth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, String.valueOf(exitButton.getVisibility()));
+                if (showButton) {
+                    Log.d(TAG, String.valueOf(showButton));
+                    showButton = false;
+                    exitButton.setVisibility(View.GONE);
+                    playButton.setVisibility(View.GONE);
+                    seekBar.setVisibility(View.GONE);
+                    nowTimeText.setVisibility(View.GONE);
+                    maxTimeText.setVisibility(View.GONE);
+                    cloth.setAlpha(0);
+                    slashText.setVisibility(View.GONE);
+                } else {
+                    Log.d(TAG, String.valueOf(showButton));
+                    showButton = true;
+                    exitButton.setVisibility(View.VISIBLE);
+                    nowTimeText.setVisibility(View.VISIBLE);
+                    cloth.setAlpha(0.5f);
+                }
+            }
+        });
+
+        /**
+         * 終了ボタン
+         */
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (exitButton.getVisibility() == View.VISIBLE) {
+                    releasePlayer();
+                }
+            }
+        });
     }
 
     @Override
@@ -142,7 +251,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
             mMediaPlayer = new MediaPlayer(libvlc);
             mMediaPlayer.setEventListener(mPlayerListener);
 
-// Seting up video output
+            // Seting up video output
             final IVLCVout vout = mMediaPlayer.getVLCVout();
             vout.setVideoView(mSurface);
             //vout.setSubtitlesView(mSurfaceSubtitles);
@@ -171,6 +280,13 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
 
         mVideoWidth = 0;
         mVideoHeight = 0;
+
+        playingPrefer = getSharedPreferences("playing", MODE_PRIVATE);
+        SharedPreferences.Editor editor = playingPrefer.edit();
+        editor.putBoolean("playing",false);
+        editor.apply();
+
+        finish();
     }
 
     /**
@@ -237,7 +353,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
         // store video size
         mVideoWidth = width;
         mVideoHeight = height;
-        setSize(mVideoWidth, mVideoHeight);
+        //setSize(mVideoWidth, mVideoHeight);
     }
 
     @Override
@@ -257,7 +373,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
         Toast.makeText(this, "Error with hardware acceleration", Toast.LENGTH_LONG).show();
     }
 
-    private static class MyPlayerListener implements MediaPlayer.EventListener {
+    private class MyPlayerListener implements MediaPlayer.EventListener {
         private WeakReference<RtmpVlcPlayerForLiveStreamActivity> mOwner;
 
         public MyPlayerListener(RtmpVlcPlayerForLiveStreamActivity owner) {
@@ -288,6 +404,13 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
                     break;
                 case MediaPlayer.Event.Stopped:
                     Log.d(TAG, "MediaPlayer.Event.Stopped");
+                    break;
+                case MediaPlayer.Event.TimeChanged:
+                    Log.d(TAG, "MediaPlayer.Event.TimeChanged");
+                    SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
+                    String timeFormatted = formatter.format(mMediaPlayer.getTime());
+                    Log.d(TAG,"ttimeFormatted" + timeFormatted);
+                    nowTimeText.setText(timeFormatted);
                     break;
                 default:
                     break;

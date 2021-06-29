@@ -16,12 +16,6 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <service android:name=".RtmpVlcPlayerActivity$StatusExeTask"
-            />
-
-        <service android:name=".RtmpVlcPlayerActivity$CountExeTask"
-            />
-
         <meta-data
             android:name="asset_statements"
             android:resource="@string/asset_statements" />
