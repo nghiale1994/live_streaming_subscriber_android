@@ -46,22 +46,24 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
     private static MediaPlayer mMediaPlayer = null;
 
     /**
-     * 再生中か否か
+     * 動画が再生中か否か
      * キー名 playing
-     * //TODO 今は状態を保存してるだけで特に使ってない
+     * デフォルト値 false
      */
     private SharedPreferences playingPrefer;
     /**
      * 取得したURL
      * キー名 url
-     * //TODO 今は状態を保存してるだけで特に使ってない
+     * デフォルト値 ""
+     * //TODO 今はURLを保存してるだけで特に使ってない
      */
     private SharedPreferences urlPrefer;
     /**
-     * シークバーの値を一時保存するのに使用
+     * SeekBarの値を一時保存するのに使用
      * シーク中に値を保存してシークバーから手を話したら値を読み込んでsetTimeするだけ
      * なお再生開始時には0を挿入している
      * キー名 progress
+     * デフォルト値 0
      */
     private SharedPreferences progressPrefer;
 
@@ -82,15 +84,10 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         //TODO URLを修正する
         mFilePath = Properties.API_TEST_MP4_PREFIX + "7d30050fb44be9a8f96059e9e9ceebc3.mp4";
 
-        playingPrefer = getSharedPreferences("playing", MODE_PRIVATE);
-        SharedPreferences.Editor editor = playingPrefer.edit();
-        editor.putBoolean("playing",true);
-        editor.apply();
-
         urlPrefer = getSharedPreferences("url", MODE_PRIVATE);
-        SharedPreferences.Editor editor2 = urlPrefer.edit();
-        editor2.putString("url",mFilePath);
-        editor2.apply();
+        SharedPreferences.Editor editor = urlPrefer.edit();
+        editor.putString("url",mFilePath);
+        editor.apply();
 
         Log.d(AppUtils.get().tag(), "Playing: " + mFilePath);
         mSurface = (SurfaceView) findViewById(R.id.surface);
@@ -167,9 +164,9 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         showButton = false;
 
         progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
-        SharedPreferences.Editor editor3 = progressPrefer.edit();
-        editor3.putInt("progress",0);
-        editor3.apply();
+        SharedPreferences.Editor editor2 = progressPrefer.edit();
+        editor2.putInt("progress",0);
+        editor2.apply();
 
         seekBar.setProgress(0);
         seekBar.setVisibility(View.GONE);
@@ -440,7 +437,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
             dialog = new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_reconnecting))
                     .setView(progressBar)
-                    .setCancelable(true)
+                    .setCancelable(false)
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {

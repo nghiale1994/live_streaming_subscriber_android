@@ -43,14 +43,16 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     private View cloth;
 
     /**
-     * 再生中か否か
+     * 動画が再生中か否か
      * キー名 playing
+     * デフォルト値 false
      * //TODO 今は状態を保存してるだけで特に使ってない
      */
     private SharedPreferences playingPrefer;
     /**
      * 取得したURL
      * キー名 url
+     * デフォルト値 ""
      * //TODO 今は状態を保存してるだけで特に使ってない
      */
     private SharedPreferences urlPrefer;
@@ -289,7 +291,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
             dialog = new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_reconnecting))
                     .setView(progressBar)
-                    .setCancelable(true)
+                    .setCancelable(false)
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
