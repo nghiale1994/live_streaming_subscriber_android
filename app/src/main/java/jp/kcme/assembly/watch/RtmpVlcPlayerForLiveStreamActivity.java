@@ -14,7 +14,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,9 +25,7 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.TimeZone;
 
 public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implements IVLCVout.Callback {
     public final static String TAG = "LiveStreamActivity";
@@ -42,9 +39,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     private int mVideoHeight;
 
     private boolean showButton;
-    private SeekBar seekBar;
     private TextView nowTimeText;
-    private TextView slashText;
     private View cloth;
 
     /**
@@ -89,32 +84,10 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
         ImageView exitButton = findViewById(R.id.live_exit);
         exitButton.setVisibility(View.GONE);
 
-        ImageView playButton = findViewById(R.id.live_play);
-        playButton.setVisibility(View.GONE);
-
         nowTimeText = findViewById(R.id.live_nowTime);
         nowTimeText.setVisibility(View.GONE);
 
-        slashText = findViewById(R.id.live_slash);
-        slashText.setVisibility(View.GONE);
-
-        SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
-        String timeFormatted = formatter.format(82000);
-
-        Log.d(TAG,"ttimeFormatted" + timeFormatted);
-        nowTimeText.setText(timeFormatted);
-
-        TextView maxTimeText = findViewById(R.id.live_maxTime);
-        maxTimeText.setText(timeFormatted);
-        maxTimeText.setVisibility(View.GONE);
-
         showButton = false;
-
-        seekBar = findViewById(R.id.live_seekbar);
-        seekBar.setProgress(0);
-        //TODO 録画の時間を取得できるようにする
-        seekBar.setMax(82000); //動画の時間が0:01:22の場合82000ミリ秒
-        seekBar.setVisibility(View.GONE);
 
         /**
          * Viewクリックでボタンの表示非表示切り替え
@@ -128,17 +101,13 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
                     Log.d(TAG, String.valueOf(showButton));
                     showButton = false;
                     exitButton.setVisibility(View.GONE);
-                    playButton.setVisibility(View.GONE);
-                    seekBar.setVisibility(View.GONE);
                     nowTimeText.setVisibility(View.GONE);
-                    maxTimeText.setVisibility(View.GONE);
                     cloth.setAlpha(0);
-                    slashText.setVisibility(View.GONE);
                 } else {
                     Log.d(TAG, String.valueOf(showButton));
                     showButton = true;
                     exitButton.setVisibility(View.VISIBLE);
-                    nowTimeText.setVisibility(View.VISIBLE);
+                    //nowTimeText.setVisibility(View.VISIBLE);
                     cloth.setAlpha(0.5f);
                 }
             }
@@ -353,7 +322,7 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
         // store video size
         mVideoWidth = width;
         mVideoHeight = height;
-        //setSize(mVideoWidth, mVideoHeight);
+        setSize(mVideoWidth, mVideoHeight);
     }
 
     @Override
@@ -407,10 +376,6 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
                     break;
                 case MediaPlayer.Event.TimeChanged:
                     Log.d(TAG, "MediaPlayer.Event.TimeChanged");
-                    SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
-                    String timeFormatted = formatter.format(mMediaPlayer.getTime());
-                    Log.d(TAG,"ttimeFormatted" + timeFormatted);
-                    nowTimeText.setText(timeFormatted);
                     break;
                 default:
                     break;

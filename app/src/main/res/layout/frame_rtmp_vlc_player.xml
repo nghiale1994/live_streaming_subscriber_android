@@ -11,8 +11,7 @@
         android:id="@+id/surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <View
         android:id="@+id/cloth"
@@ -61,8 +60,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="12dp"
-                        android:text="00:00"
-                        android:textSize="68sp"
+                        android:text="00:00:00"
+                        android:textSize="68dp"
                         android:textColor="@color/black"
                         />
 
@@ -71,7 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="/"
-                        android:textSize="68sp"
+                        android:textSize="68dp"
                         android:textColor="@color/black"
                         />
 
@@ -81,8 +80,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="12dp"
                         android:layout_gravity="right"
-                        android:text="00:00"
-                        android:textSize="68sp"
+                        android:text="00:00:00"
+                        android:textSize="68dp"
                         android:textColor="@color/black"
                         />
                 </LinearLayout>
@@ -98,7 +97,7 @@
                     />
             </LinearLayout>
 
-            </LinearLayout>
-
         </LinearLayout>
+
+    </LinearLayout>
 </FrameLayout>

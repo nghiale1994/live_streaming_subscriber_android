@@ -30,6 +30,7 @@ import org.videolan.libvlc.MediaPlayer;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,24 +117,51 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
 
         seekBar = findViewById(R.id.seekbar);
 
-        //TODO 00:00 前提なので書式が変わると困る
         String duration = getIntent().getStringExtra("duration");
 
-        String regex = "(\\d{2}):(\\d{2})";
-        Pattern p = Pattern.compile(regex);
+        if (duration.length() > 6) {
+            String regex = "(\\d{2}):(\\d{2}):(\\d{2})";
+            Pattern p = Pattern.compile(regex);
 
-        Matcher m = p.matcher(duration);
-        if (m.find()){
-            int mm = Integer.parseInt(m.group(1));
-            int ss = Integer.parseInt(m.group(2));
+            Matcher m = p.matcher(duration);
+            if (m.find()){
+                int hh = Integer.parseInt(m.group(1));
+                int mm = Integer.parseInt(m.group(2));
+                int ss = Integer.parseInt(m.group(3));
 
-            int a = mm * 60000;
-            int b = ss * 1000;
+                System.out.println("hh: " + hh + " mm: " + mm + " ss: " + ss);
 
-            seekBar.setMax(a+b);
+                int a = hh * 3600000;
+                int b = mm * 60000;
+                int c = ss * 1000;
+
+                System.out.println("a: " + a + " b: " + b + " c: " + c);
+
+                seekBar.setMax(a + b + c);
+                Log.d("SeekBarMax: ", String.valueOf(a + b + c));
+                maxTimeText.setText(duration);
+            }
+        } else {
+            String regex = "(\\d{2}):(\\d{2})";
+            Pattern p = Pattern.compile(regex);
+
+            Matcher m = p.matcher(duration);
+            if (m.find()){
+                int mm = Integer.parseInt(m.group(1));
+                int ss = Integer.parseInt(m.group(2));
+
+                System.out.println(" mm: " + mm + " ss: " + ss);
+
+                int a = mm * 60000;
+                int b = ss * 1000;
+
+                System.out.println("a: " + a + " b: " + b);
+
+                seekBar.setMax(a + b);
+                Log.d("SeekBarMax: ", String.valueOf(a + b));
+                maxTimeText.setText("00:" + duration);
+            }
         }
-
-        maxTimeText.setText(duration);
 
         maxTimeText.setVisibility(View.GONE);
         showButton = false;
@@ -452,7 +480,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         // store video size
         mVideoWidth = width;
         mVideoHeight = height;
-        //setSize(mVideoWidth, mVideoHeight);
+        setSize(mVideoWidth, mVideoHeight);
     }
 
     @Override
@@ -502,11 +530,12 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                     break;
                 case MediaPlayer.Event.TimeChanged:
                     Log.d(TAG, "MediaPlayer.Event.TimeChanged");
-                    SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
                     String timeFormatted = formatter.format(mMediaPlayer.getTime());
-                    Log.d(TAG,"ttimeFormatted" + timeFormatted);
-                    nowTimeText.setText(timeFormatted);
                     Log.d(TAG, String.valueOf(mMediaPlayer.getTime()));
+                    Log.d(TAG,"ttimeFormatted: " + timeFormatted);
+                    nowTimeText.setText(timeFormatted);
                     seekBar.setProgress((int) mMediaPlayer.getTime());
                     break;
                 default:
