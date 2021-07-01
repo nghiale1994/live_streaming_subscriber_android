@@ -494,6 +494,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
     @Override
     public void onHardwareAccelerationError(IVLCVout vlcVout) {
         Log.e(AppUtils.get().tag(), "Error with hardware acceleration");
+        Toast.makeText(this, "Error with hardware acceleration", Toast.LENGTH_LONG).show();
         this.releasePlayer();
         restartApp();
     }

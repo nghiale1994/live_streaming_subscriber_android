@@ -310,6 +310,13 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     }
 
     /**
+     * 主に配信側で配信が停止されたときなど異常終了時に呼ばれるkillProcessを実行するだけのメソッド
+     */
+    private static void restartApp() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    /**
      * Registering callbacks
      */
     private MediaPlayer.EventListener mPlayerListener = new MyPlayerListener(this);
@@ -338,8 +345,9 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     @Override
     public void onHardwareAccelerationError(IVLCVout vlcVout) {
         Log.e(TAG, "Error with hardware acceleration");
-        this.releasePlayer();
         Toast.makeText(this, "Error with hardware acceleration", Toast.LENGTH_LONG).show();
+        this.releasePlayer();
+        restartApp();
     }
 
     private class MyPlayerListener implements MediaPlayer.EventListener {
