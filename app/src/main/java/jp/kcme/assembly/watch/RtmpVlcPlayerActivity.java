@@ -34,6 +34,8 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jp.kcme.assembly.watch.util.ContextUtil;
+
 public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Callback {
     public final static String TAG = "RtmpVlcPlayerActivity";
 
@@ -66,6 +68,12 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
      * デフォルト値 0
      */
     private SharedPreferences progressPrefer;
+    /**
+     * アプリ離脱復帰の判断に使用
+     * キー名 pause
+     * デフォルト値 false
+     */
+    private SharedPreferences pausePrefer;
 
     private boolean showButton;
     private boolean playButtonStatus = true;
@@ -126,13 +134,9 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                 int mm = Integer.parseInt(m.group(2));
                 int ss = Integer.parseInt(m.group(3));
 
-                System.out.println("hh: " + hh + " mm: " + mm + " ss: " + ss);
-
                 int a = hh * 3600000;
                 int b = mm * 60000;
                 int c = ss * 1000;
-
-                System.out.println("a: " + a + " b: " + b + " c: " + c);
 
                 seekBar.setMax(a + b + c);
                 Log.d("SeekBarMax: ", String.valueOf(a + b + c));
@@ -147,12 +151,8 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                 int mm = Integer.parseInt(m.group(1));
                 int ss = Integer.parseInt(m.group(2));
 
-                System.out.println(" mm: " + mm + " ss: " + ss);
-
                 int a = mm * 60000;
                 int b = ss * 1000;
-
-                System.out.println("a: " + a + " b: " + b);
 
                 seekBar.setMax(a + b);
                 Log.d("SeekBarMax: ", String.valueOf(a + b));
@@ -164,11 +164,9 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         showButton = false;
 
         progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
-        SharedPreferences.Editor editor2 = progressPrefer.edit();
-        editor2.putInt("progress",0);
-        editor2.apply();
+        int progress = progressPrefer.getInt("progress",0);
 
-        seekBar.setProgress(0);
+        seekBar.setProgress(progress);
         seekBar.setVisibility(View.GONE);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -278,15 +276,41 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
     protected void onResume() {
         Log.v (AppUtils.get().tag(), "onResume");
         super.onResume();
-        createPlayer(mFilePath);
-        scheduleReconnectPLayer();
+
+        pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+        boolean isPause = pausePrefer.getBoolean("pause",false);
+
+        if (isPause) {
+            System.out.println("onResume true");
+            try {
+                createPlayer(mFilePath);
+            } catch (NullPointerException e) {
+                restartApp();
+            }
+        } else {
+            System.out.println("onResume false");
+            createPlayer(mFilePath);
+            scheduleReconnectPLayer();
+        }
     }
 
     @Override
     protected void onPause() {
         Log.v (AppUtils.get().tag(), "onPause");
         super.onPause();
-        releasePlayer();
+
+        pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+        boolean isPause = pausePrefer.getBoolean("pause",false);
+
+        if (!isPause) {
+            System.out.println("onPause false");
+            mMediaPlayer.pause();
+            SharedPreferences.Editor editor = pausePrefer.edit();
+            editor.putBoolean("pause",true);
+            editor.apply();
+        } else {
+            System.out.println("onPause true");
+        }
     }
 
     @Override
@@ -403,7 +427,16 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         editor.putBoolean("playing",false);
         editor.apply();
 
-        finish();
+        pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+        boolean isPause = pausePrefer.getBoolean("pause",false);
+
+        if (!isPause) {
+            progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
+            SharedPreferences.Editor editor2 = progressPrefer.edit();
+            editor2.putInt("progress", 0);
+            editor2.apply();
+        }
+        restartApp();
     }
 
     /**
@@ -458,7 +491,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
     }
 
     /**
-     * 主に配信側で配信が停止されたときなど異常終了時に呼ばれるkillProcessを実行するだけのメソッド
+     * killProcessを実行する
      */
     private static void restartApp() {
         android.os.Process.killProcess(android.os.Process.myPid());
@@ -496,6 +529,11 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         restartApp();
     }
 
+    @Override
+    public void onBackPressed(){
+        Log.v (AppUtils.get().tag(), "onBackPressed");
+    }
+
     private class MyPlayerListener implements MediaPlayer.EventListener {
         private WeakReference<RtmpVlcPlayerActivity> mOwner;
 
@@ -528,6 +566,21 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                     break;
                 case MediaPlayer.Event.TimeChanged:
                     Log.d(TAG, "MediaPlayer.Event.TimeChanged");
+
+                    pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+                    boolean isPause = pausePrefer.getBoolean("pause",false);
+                    progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
+                    int progress = progressPrefer.getInt("progress",0);
+
+                    //TODO 動画再生→アプリ強制終了→アプリ起動→別の動画を再生時でも同一の時間で復元してしまうので修正する
+                    //onPause（アプリ離脱時）でURLを保存、アプリ復帰後の動画再生時にサーバから取得したURLとonPauseで保存したURLと一致しているか確認して一致していなかったら保存している時刻は破棄するとか
+                    if (isPause) {
+                        mMediaPlayer.setTime(progress);
+                        SharedPreferences.Editor editor2 = pausePrefer.edit();
+                        editor2.putBoolean("pause",false);
+                        editor2.apply();
+                    }
+
                     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
                     formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
                     String timeFormatted = formatter.format(mMediaPlayer.getTime());
@@ -535,6 +588,10 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                     Log.d(TAG,"ttimeFormatted: " + timeFormatted);
                     nowTimeText.setText(timeFormatted);
                     seekBar.setProgress((int) mMediaPlayer.getTime());
+                    progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = progressPrefer.edit();
+                    editor.putInt("progress",(int) mMediaPlayer.getTime());
+                    editor.apply();
                     break;
                 default:
                     break;
