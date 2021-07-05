@@ -62,12 +62,12 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.frame_rtmp_vlc_player_for_livestream);
 
-        mFilePath = Properties.API_TEST_RTMP_PREFIX + getIntent().getStringExtra("channelId");
-
         playingPrefer = getSharedPreferences("playing", MODE_PRIVATE);
         SharedPreferences.Editor editor = playingPrefer.edit();
         editor.putBoolean("playing",true);
         editor.apply();
+
+        mFilePath = Properties.API_TEST_RTMP_PREFIX + getIntent().getStringExtra("channelId");
 
         urlPrefer = getSharedPreferences("url", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = urlPrefer.edit();

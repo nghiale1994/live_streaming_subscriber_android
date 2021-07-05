@@ -85,13 +85,18 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         super.onCreate(savedInstanceState);
         setContentView(R.layout.frame_rtmp_vlc_player);
 
+        playingPrefer = getSharedPreferences("playing", MODE_PRIVATE);
+        SharedPreferences.Editor editor = playingPrefer.edit();
+        editor.putBoolean("playing",true);
+        editor.apply();
+
         //TODO URLを修正する
         mFilePath = Properties.API_TEST_MP4_PREFIX + "7d30050fb44be9a8f96059e9e9ceebc3.mp4";
 
         urlPrefer = getSharedPreferences("url", MODE_PRIVATE);
-        SharedPreferences.Editor editor = urlPrefer.edit();
-        editor.putString("url",mFilePath);
-        editor.apply();
+        SharedPreferences.Editor editor2 = urlPrefer.edit();
+        editor2.putString("url",mFilePath);
+        editor2.apply();
 
         Log.d(AppUtils.get().tag(), "Playing: " + mFilePath);
         mSurface = (SurfaceView) findViewById(R.id.surface);
@@ -562,7 +567,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                     progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
                     int progress = progressPrefer.getInt("progress",0);
 
-                    //TODO 動画再生→アプリ強制終了→アプリ起動→別の動画を再生時でも同一の時間で復元してしまうので修正する
+                    //TODO 動画再生→アプリをタスクから削除→アプリ起動→別の動画を再生時でも同一の時間で復元してしまうので修正する
                     if (isPause) {
                         mMediaPlayer.setTime(progress);
                         SharedPreferences.Editor editor2 = pausePrefer.edit();
