@@ -1,4 +1,4 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.activity;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -24,6 +24,11 @@ import org.videolan.libvlc.MediaPlayer;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+
+import jp.kcme.assembly.watch.common.PlayerReconnector;
+import jp.kcme.assembly.watch.R;
+import jp.kcme.assembly.watch.constants.Properties;
+import jp.kcme.assembly.watch.util.AppUtils;
 
 public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implements IVLCVout.Callback {
     public final static String TAG = "LiveStreamActivity";

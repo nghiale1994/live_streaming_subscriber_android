@@ -6,7 +6,7 @@
     android:keepScreenOn="true"
     android:background="@color/black"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".RtmpVlcPlayerActivity">
+    tools:context=".activity.RtmpVlcPlayerActivity">
 
     <SurfaceView
         android:id="@+id/surface"

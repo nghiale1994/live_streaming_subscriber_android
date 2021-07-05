@@ -1,4 +1,4 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.common;
 
 import android.util.Log;
 
@@ -6,6 +6,8 @@ import org.videolan.libvlc.MediaPlayer;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import jp.kcme.assembly.watch.util.AppUtils;
 
 /**
  * This class only manages the reconnection of

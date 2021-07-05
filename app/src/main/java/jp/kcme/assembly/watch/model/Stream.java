@@ -1,4 +1,4 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.model;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -10,6 +10,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+
+import jp.kcme.assembly.watch.util.AppUtils;
 
 public class Stream implements Comparable {
 

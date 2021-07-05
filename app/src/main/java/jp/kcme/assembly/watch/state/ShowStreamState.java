@@ -4,13 +4,12 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import jp.kcme.assembly.watch.AppUtils;
-import jp.kcme.assembly.watch.Stream;
+import jp.kcme.assembly.watch.util.AppUtils;
+import jp.kcme.assembly.watch.model.Stream;
 import jp.kcme.assembly.watch.retrofit.AppRequest;
 import jp.kcme.assembly.watch.retrofit.AppService;
 import jp.kcme.assembly.watch.retrofit.StreamListResponse;

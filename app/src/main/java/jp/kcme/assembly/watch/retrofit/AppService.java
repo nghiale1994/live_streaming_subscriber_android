@@ -3,7 +3,7 @@ package jp.kcme.assembly.watch.retrofit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import jp.kcme.assembly.watch.Properties;
+import jp.kcme.assembly.watch.constants.Properties;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

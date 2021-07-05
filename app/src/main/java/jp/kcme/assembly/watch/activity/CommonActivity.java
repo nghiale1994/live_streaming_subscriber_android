@@ -1,4 +1,4 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.activity;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -10,6 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import jp.kcme.assembly.watch.util.AppUtils;
 
 
 public class CommonActivity extends AppCompatActivity {

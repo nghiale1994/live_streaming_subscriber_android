@@ -1,15 +1,11 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.util;
 
-import android.annotation.SuppressLint;
 import android.util.Log;
 
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

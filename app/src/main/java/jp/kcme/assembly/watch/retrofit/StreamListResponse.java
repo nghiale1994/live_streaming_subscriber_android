@@ -6,8 +6,8 @@ import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 
-import jp.kcme.assembly.watch.AppUtils;
-import jp.kcme.assembly.watch.Stream;
+import jp.kcme.assembly.watch.util.AppUtils;
+import jp.kcme.assembly.watch.model.Stream;
 
 public class StreamListResponse {
     @Expose

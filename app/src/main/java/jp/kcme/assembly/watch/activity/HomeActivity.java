@@ -1,4 +1,4 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import jp.kcme.assembly.watch.R;
+import jp.kcme.assembly.watch.model.Stream;
+import jp.kcme.assembly.watch.common.StreamListAdapter;
 import jp.kcme.assembly.watch.state.ShowStreamState;
 import jp.kcme.assembly.watch.util.NetworkUtil;
 

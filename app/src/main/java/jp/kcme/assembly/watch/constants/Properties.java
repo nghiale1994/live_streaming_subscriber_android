@@ -1,4 +1,4 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.constants;
 
 public class Properties {
     //TODO API_PREFIXを修正する

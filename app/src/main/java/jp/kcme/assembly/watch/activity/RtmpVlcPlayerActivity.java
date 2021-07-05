@@ -1,4 +1,4 @@
-package jp.kcme.assembly.watch;
+package jp.kcme.assembly.watch.activity;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -31,6 +31,11 @@ import java.util.ArrayList;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import jp.kcme.assembly.watch.common.PlayerReconnector;
+import jp.kcme.assembly.watch.R;
+import jp.kcme.assembly.watch.constants.Properties;
+import jp.kcme.assembly.watch.util.AppUtils;
 
 public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Callback {
     public final static String TAG = "RtmpVlcPlayerActivity";

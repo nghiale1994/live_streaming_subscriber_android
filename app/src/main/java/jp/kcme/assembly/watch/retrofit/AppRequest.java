@@ -1,6 +1,6 @@
 package jp.kcme.assembly.watch.retrofit;
 
-import jp.kcme.assembly.watch.Properties;
+import jp.kcme.assembly.watch.constants.Properties;
 import retrofit2.Call;
 import retrofit2.http.POST;
 
