@@ -6,14 +6,12 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -279,19 +277,17 @@ public class RtmpVlcPlayerForLiveStreamActivity extends CommonActivity implement
     // TODO: 6/27/2021  ダイヤログのレイアウトを変更すること
     private void showReconnectingDialog() {
         if (dialog == null) {
-            final ProgressBar progressBar = new ProgressBar(this);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(5,5,5,5);
-            lp.gravity = Gravity.START;
-            progressBar.setLayoutParams(lp);
-            progressBar.setPadding(5,5,5,5);
+            //Dialogレイアウト取得用のView
+            View inputView;
+
+            //Dialog用レイアウトの読み込み
+            LayoutInflater factory = LayoutInflater.from(this);
+            inputView = factory.inflate(R.layout.dialog_layout, null);
 
             dialog = new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_reconnecting))
-                    .setView(progressBar)
-                    .setCancelable(false)
+                    .setView(inputView)
+                    .setCancelable(true)
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {

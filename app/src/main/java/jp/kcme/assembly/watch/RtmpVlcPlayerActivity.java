@@ -8,14 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,8 +31,6 @@ import java.util.ArrayList;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import jp.kcme.assembly.watch.util.ContextUtil;
 
 public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Callback {
     public final static String TAG = "RtmpVlcPlayerActivity";
@@ -277,18 +273,16 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         Log.v (AppUtils.get().tag(), "onResume");
         super.onResume();
 
-        pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+        pausePrefer = getSharedPreferences("pause", MODE_PRIVATE);
         boolean isPause = pausePrefer.getBoolean("pause",false);
 
         if (isPause) {
-            System.out.println("onResume true");
             try {
                 createPlayer(mFilePath);
             } catch (NullPointerException e) {
                 restartApp();
             }
         } else {
-            System.out.println("onResume false");
             createPlayer(mFilePath);
             scheduleReconnectPLayer();
         }
@@ -299,17 +293,15 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         Log.v (AppUtils.get().tag(), "onPause");
         super.onPause();
 
-        pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+        pausePrefer = getSharedPreferences("pause", MODE_PRIVATE);
         boolean isPause = pausePrefer.getBoolean("pause",false);
 
         if (!isPause) {
-            System.out.println("onPause false");
             mMediaPlayer.pause();
             SharedPreferences.Editor editor = pausePrefer.edit();
             editor.putBoolean("pause",true);
             editor.apply();
         } else {
-            System.out.println("onPause true");
         }
     }
 
@@ -427,7 +419,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         editor.putBoolean("playing",false);
         editor.apply();
 
-        pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+        pausePrefer = getSharedPreferences("pause", MODE_PRIVATE);
         boolean isPause = pausePrefer.getBoolean("pause",false);
 
         if (!isPause) {
@@ -458,19 +450,17 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
     // TODO: 6/27/2021  ダイヤログのレイアウトを変更すること
     private void showReconnectingDialog() {
         if (dialog == null) {
-            final ProgressBar progressBar = new ProgressBar(this);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(5,5,5,5);
-            lp.gravity = Gravity.START;
-            progressBar.setLayoutParams(lp);
-            progressBar.setPadding(5,5,5,5);
+            //Dialogレイアウト取得用のView
+            View inputView;
+
+            //Dialog用レイアウトの読み込み
+            LayoutInflater factory = LayoutInflater.from(this);
+            inputView = factory.inflate(R.layout.dialog_layout, null);
 
             dialog = new AlertDialog.Builder(this)
                     .setTitle(getResources().getString(R.string.dialog_reconnecting))
-                    .setView(progressBar)
-                    .setCancelable(false)
+                    .setView(inputView)
+                    .setCancelable(true)
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
@@ -567,13 +557,12 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                 case MediaPlayer.Event.TimeChanged:
                     Log.d(TAG, "MediaPlayer.Event.TimeChanged");
 
-                    pausePrefer = ContextUtil.getInstance().getSharedPreferences("pause", ContextUtil.getInstance().MODE_PRIVATE);
+                    pausePrefer = getSharedPreferences("pause", MODE_PRIVATE);
                     boolean isPause = pausePrefer.getBoolean("pause",false);
                     progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
                     int progress = progressPrefer.getInt("progress",0);
 
                     //TODO 動画再生→アプリ強制終了→アプリ起動→別の動画を再生時でも同一の時間で復元してしまうので修正する
-                    //onPause（アプリ離脱時）でURLを保存、アプリ復帰後の動画再生時にサーバから取得したURLとonPauseで保存したURLと一致しているか確認して一致していなかったら保存している時刻は破棄するとか
                     if (isPause) {
                         mMediaPlayer.setTime(progress);
                         SharedPreferences.Editor editor2 = pausePrefer.edit();
