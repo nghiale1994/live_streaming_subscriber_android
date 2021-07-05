@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
@@ -25,6 +26,8 @@ import com.google.androidbrowserhelper.trusted.TwaLauncher;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import jp.kcme.assembly.watch.util.NetworkUtil;
 
 public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.ViewHolder> {
 
@@ -136,18 +139,23 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
 ////                context.startActivity(intent);
 
 //                Intent intent = new Intent(context, RTMPPlayerActivity.class);
-                Intent intent;
-                if (stream.isStreaming()) {
-                    intent = new Intent(context, RtmpVlcPlayerForLiveStreamActivity.class);
-                    if (!stream.getChannelId().equals("")) {
-                        intent.putExtra("channelId", stream.getChannelId());
-                        intent.putExtra("createdDate",stream.getCreatedDate());
+                if (NetworkUtil.isOnline(context)) {
+                    Intent intent;
+                    if (stream.isStreaming()) {
+                        intent = new Intent(context, RtmpVlcPlayerForLiveStreamActivity.class);
+                        if (!stream.getChannelId().equals("")) {
+                            intent.putExtra("channelId", stream.getChannelId());
+                            intent.putExtra("createdDate",stream.getCreatedDate());
+                        }
+                    } else {
+                        intent = new Intent(context, RtmpVlcPlayerActivity.class);
+                        intent.putExtra("duration",stream.getVideo().getDuration());
                     }
+                    context.startActivity(intent);
                 } else {
-                    intent = new Intent(context, RtmpVlcPlayerActivity.class);
-                    intent.putExtra("duration",stream.getVideo().getDuration());
+                    String netErrorStr = context.getString(R.string.network_error);
+                    Toast.makeText(context, netErrorStr, Toast.LENGTH_LONG).show();
                 }
-                context.startActivity(intent);
             }
         });
     }

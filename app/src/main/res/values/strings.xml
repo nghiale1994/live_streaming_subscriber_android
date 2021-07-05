@@ -19,5 +19,7 @@
     <string name="video">録画</string>
     <string name="end">終了しました</string>
 
+    <string name="network_error">ネットワークに接続していません</string>
+
     <string name="dialog_reconnecting">接続中</string>
 </resources>

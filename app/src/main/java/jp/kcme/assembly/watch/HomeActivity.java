@@ -1,10 +1,12 @@
 package jp.kcme.assembly.watch;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import jp.kcme.assembly.watch.state.ShowStreamState;
+import jp.kcme.assembly.watch.util.NetworkUtil;
 
 public class HomeActivity extends CommonActivity {
     private ArrayList<Stream> streamList;
@@ -26,6 +29,8 @@ public class HomeActivity extends CommonActivity {
     private TextView showHistoryOnlyBtn;
     
     private RecyclerView streamListview;
+
+    private final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,21 +87,36 @@ public class HomeActivity extends CommonActivity {
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                state.fetchStreams();
+                if (NetworkUtil.isOnline(context)) {
+                    state.fetchStreams();
+                } else {
+                    String netErrorStr = context.getString(R.string.network_error);
+                    Toast.makeText(context, netErrorStr, Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         showStreamingOnlyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                state.toggleMode(ShowStreamState.SHOW_ONLY_STREAMING_MODE);
+                if (NetworkUtil.isOnline(context)) {
+                    state.toggleMode(ShowStreamState.SHOW_ONLY_STREAMING_MODE);
+                } else {
+                    String netErrorStr = context.getString(R.string.network_error);
+                    Toast.makeText(context, netErrorStr, Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         showHistoryOnlyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                state.toggleMode(ShowStreamState.SHOW_ONLY_HISTORY_MODE);
+                if (NetworkUtil.isOnline(context)) {
+                    state.toggleMode(ShowStreamState.SHOW_ONLY_HISTORY_MODE);
+                } else {
+                    String netErrorStr = context.getString(R.string.network_error);
+                    Toast.makeText(context, netErrorStr, Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
