@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 
 import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
@@ -188,7 +189,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
             public void onStartTrackingTouch(SeekBar seekBar) {
                 mMediaPlayer.pause();
                 playButtonStatus = false;
-                Drawable drawable = getResources().getDrawable(R.drawable.outline_play_circle_black_48);
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_play_circle_black_48, null);
                 playButton.setImageDrawable(drawable);
             }
 
@@ -199,7 +200,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                 mMediaPlayer.setTime(progress);
                 mMediaPlayer.play();
                 playButtonStatus = true;
-                Drawable drawable = getResources().getDrawable(R.drawable.outline_pause_circle_black_48);
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_pause_circle_black_48, null);
                 playButton.setImageDrawable(drawable);
             }
         });
@@ -259,12 +260,12 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                     if (playButtonStatus) {
                         mMediaPlayer.pause();
                         playButtonStatus = false;
-                        Drawable drawable = getResources().getDrawable(R.drawable.outline_play_circle_black_48);
+                        Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_play_circle_black_48, null);
                         playButton.setImageDrawable(drawable);
                     } else {
                         mMediaPlayer.play();
                         playButtonStatus = true;
-                        Drawable drawable = getResources().getDrawable(R.drawable.outline_pause_circle_black_48);
+                        Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_pause_circle_black_48, null);
                         playButton.setImageDrawable(drawable);
                     }
                 }
