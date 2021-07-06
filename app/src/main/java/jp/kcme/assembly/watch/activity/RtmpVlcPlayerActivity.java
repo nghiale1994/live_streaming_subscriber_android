@@ -76,6 +76,12 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
      * デフォルト値 false
      */
     private SharedPreferences pausePrefer;
+    /**
+     * 一時停止ボタンのステータス判断に使用
+     * キー名 button
+     * デフォルト値 false
+     */
+    private SharedPreferences pauseButtonPrefer;
 
     private boolean showButton;
     private boolean playButtonStatus = true;
@@ -103,6 +109,11 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         SharedPreferences.Editor editor2 = urlPrefer.edit();
         editor2.putString("url",mFilePath);
         editor2.apply();
+
+        pauseButtonPrefer = getSharedPreferences("button", MODE_PRIVATE);
+        SharedPreferences.Editor editor3 = pauseButtonPrefer.edit();
+        editor3.putBoolean("button",false);
+        editor3.apply();
 
         Log.d(AppUtils.get().tag(), "Playing: " + mFilePath);
         mSurface = (SurfaceView) findViewById(R.id.surface);
@@ -198,10 +209,24 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
                 progressPrefer = getSharedPreferences("progress", MODE_PRIVATE);
                 int progress = progressPrefer.getInt("progress",0);
                 mMediaPlayer.setTime(progress);
-                mMediaPlayer.play();
-                playButtonStatus = true;
-                Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_pause_circle_black_48, null);
-                playButton.setImageDrawable(drawable);
+                Log.d("mMediaPlayer", String.valueOf(mMediaPlayer.getPlayerState()));
+
+                pauseButtonPrefer = getSharedPreferences("button", MODE_PRIVATE);
+                boolean button = pauseButtonPrefer.getBoolean("button",false);
+
+                if (!button) {
+                    mMediaPlayer.play();
+                    playButtonStatus = true;
+                    Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_pause_circle_black_48, null);
+                    playButton.setImageDrawable(drawable);
+                } else {
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    String timeFormatted = formatter.format(mMediaPlayer.getTime());
+                    Log.d(TAG, String.valueOf(mMediaPlayer.getTime()));
+                    Log.d(TAG,"ttimeFormatted: " + timeFormatted);
+                    nowTimeText.setText(timeFormatted);
+                }
             }
         });
 
@@ -257,16 +282,23 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
             @Override
             public void onClick(View v) {
                 if (playButton.getVisibility() == View.VISIBLE) {
+                    pauseButtonPrefer = getSharedPreferences("button", MODE_PRIVATE);
                     if (playButtonStatus) {
                         mMediaPlayer.pause();
                         playButtonStatus = false;
                         Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_play_circle_black_48, null);
                         playButton.setImageDrawable(drawable);
+                        SharedPreferences.Editor editor = pauseButtonPrefer.edit();
+                        editor.putBoolean("button",true);
+                        editor.apply();
                     } else {
                         mMediaPlayer.play();
                         playButtonStatus = true;
                         Drawable drawable = ResourcesCompat.getDrawable(getResources(),R.drawable.outline_pause_circle_black_48, null);
                         playButton.setImageDrawable(drawable);
+                        SharedPreferences.Editor editor = pauseButtonPrefer.edit();
+                        editor.putBoolean("button",false);
+                        editor.apply();
                     }
                 }
             }
