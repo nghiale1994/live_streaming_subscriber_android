@@ -102,8 +102,7 @@ public class RtmpVlcPlayerActivity extends CommonActivity implements IVLCVout.Ca
         editor.putBoolean("playing",true);
         editor.apply();
 
-        //TODO URLを修正する
-        mFilePath = Properties.API_TEST_MP4_PREFIX + "7d30050fb44be9a8f96059e9e9ceebc3.mp4";
+        mFilePath = getIntent().getStringExtra("url");
 
         urlPrefer = getSharedPreferences("url", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = urlPrefer.edit();

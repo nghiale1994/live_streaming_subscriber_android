@@ -146,6 +146,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<StreamListAdapter.Vi
                     } else {
                         intent = new Intent(context, RtmpVlcPlayerActivity.class);
                         intent.putExtra("duration",stream.getVideo().getDuration());
+                        intent.putExtra("url",stream.getVideo().getUrl());
                     }
                     context.startActivity(intent);
                 } else {
